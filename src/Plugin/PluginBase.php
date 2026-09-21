@@ -14,6 +14,8 @@
 namespace Beaver\Plugin;
 
 use Beaver\Foundation\Application;
+use Beaver\Sdk\Context;
+use Beaver\Sdk\ScopedHooks;
 use Beaver\Http\Router;
 use Beaver\View\View;
 
@@ -21,6 +23,7 @@ abstract class PluginBase
 {
     public string $path;
     public array $manifest = [];
+    private ?Context $context = null;
 
     public function __construct(string $path, array $manifest)
     {
@@ -52,9 +55,22 @@ abstract class PluginBase
         return Application::getInstance();
     }
 
-    public function hooks(): Hooks
+    /**
+     * Devolve os hooks do plugin.
+     *
+     * Se um Context tiver sido atribuído (pelo PluginManager), devolve
+     * um ScopedHooks que aplica o modo audit/enforce.
+     * Caso contrário, devolve o Hooks cru (compatibilidade).
+     */
+    public function hooks(): Hooks|ScopedHooks
     {
-        return $this->app()->make(Hooks::class);
+        $inner = $this->app()->make(Hooks::class);
+
+        if ($this->context === null) {
+            return $inner;
+        }
+
+        return new ScopedHooks($inner, $this->context);
     }
 
     public function router(): Router
@@ -136,5 +152,32 @@ abstract class PluginBase
             $value = $value[$seg];
         }
         return $value;
+    }
+
+    // ---------- permissões (SDK) ----------
+
+    /**
+     * Atribui o contexto de permissões. Chamado pelo PluginManager.
+     */
+    public function setContext(Context $context): void
+    {
+        $this->context = $context;
+    }
+
+    /**
+     * Devolve o contexto atual (ou null se ainda não foi atribuído).
+     */
+    public function context(): ?Context
+    {
+        return $this->context;
+    }
+
+    /**
+     * Verifica se o plugin tem uma permissão (ex: 'db.write').
+     * Sem Context, devolve false por omissão (seguro).
+     */
+    public function hasPermission(string $scope): bool
+    {
+        return $this->context?->has($scope) ?? false;
     }
 }

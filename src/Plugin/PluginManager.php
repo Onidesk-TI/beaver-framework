@@ -15,12 +15,15 @@ namespace Beaver\Plugin;
 
 use Beaver\Foundation\Application;
 use Beaver\Sdk\ManifestValidator;
+use Beaver\Sdk\Context;
+use Beaver\Sdk\PermissionAuditor;
 
 class PluginManager
 {
     private array $plugins = [];
     private bool $discovered = false;
     private bool $booted = false;
+    private ?PermissionAuditor $auditor = null;
 
     public function __construct(private Application $app)
     {
@@ -105,6 +108,10 @@ class PluginManager
             try {
                 $instance = $this->instantiate($data);
                 $this->plugins[$slug]['instance'] = $instance;
+
+                // SDK: atribuir contexto de permissões antes do boot
+                $instance->setContext($this->createContext($data['manifest']));
+
                 $instance->boot();
             } catch (\Throwable $e) {
                 error_log("[PluginManager] Plugin '$slug' falhou: " . $e->getMessage());
@@ -196,5 +203,73 @@ class PluginManager
     public function mode(): string
     {
         return $this->app->config('app.plugins.mode', 'prod');
+    }
+
+    // ---------- permissões (SDK) ----------
+
+    /**
+     * Devolve o PermissionAuditor partilhado (cria se não existir).
+     */
+    public function auditor(): PermissionAuditor
+    {
+        return $this->auditor ??= new PermissionAuditor();
+    }
+
+    /**
+     * Cria o Context de um plugin conforme o mode configurado.
+     */
+    private function createContext(array $manifest): Context
+    {
+        $mode = (string) $this->app->config('app.plugins.permissions.mode', 'audit');
+
+        if (!in_array($mode, ['off', 'audit', 'enforce'], true)) {
+            $mode = 'audit';
+        }
+
+        $granted = $this->normalizePermissions($manifest['permissions'] ?? []);
+
+        return new Context(
+            slug:    $manifest['slug'] ?? '',
+            granted: $granted,
+            mode:    $mode,
+            auditor: $this->auditor(),
+        );
+    }
+
+    /**
+     * Achata as permissões do manifesto num array plano de strings.
+     * Suporta o formato rico: {"filesystem": {"read": [...]}}
+     */
+    private function normalizePermissions(mixed $perms): array
+    {
+        if (!is_array($perms)) {
+            return [];
+        }
+
+        $flat = [];
+        foreach ($perms as $key => $value) {
+            if (is_int($key)) {
+                if (is_string($value)) {
+                    $flat[] = $value;
+                }
+                continue;
+            }
+
+            if (is_bool($value)) {
+                $flat[] = $key;
+            } elseif (is_string($value)) {
+                $flat[] = "$key.$value";
+            } elseif (is_array($value)) {
+                if (array_is_list($value)) {
+                    $flat[] = $key;
+                } else {
+                    foreach (array_keys($value) as $subKey) {
+                        $flat[] = "$key.$subKey";
+                    }
+                }
+            }
+        }
+
+        return array_values(array_unique($flat));
     }
 }

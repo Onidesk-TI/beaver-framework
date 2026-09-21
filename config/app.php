@@ -81,6 +81,14 @@ return [
 
         'require_signature' => false,
 
+        // Permissões (SDK): off | audit | enforce
+        //   off     → não verifica nada
+        //   audit   → registra no log, não bloqueia
+        //   enforce → bloqueia com PermissionDeniedException
+        'permissions' => [
+            'mode' => getenv('BEAVER_PERMISSIONS_MODE') ?: 'audit',
+        ],
+
     ],
 
     /*

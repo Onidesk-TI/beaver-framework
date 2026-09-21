@@ -111,3 +111,6 @@ php-server.log
 **/vendor/
 **/composer.lock
 
+
+# Audit log de permissões (runtime)
+/storage/logs/plugin-audit.log
