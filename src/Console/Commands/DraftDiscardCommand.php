@@ -79,5 +79,3 @@ class DraftDiscardCommand extends Command
         return self::SUCCESS;
     }
 }
-
-
