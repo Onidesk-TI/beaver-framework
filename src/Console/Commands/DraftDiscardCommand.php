@@ -81,14 +81,3 @@ class DraftDiscardCommand extends Command
 }
 
 
-/*
- * ver se a class existe e é carregada
- *
- *
-
-cd /var/www/onidesk/beaver-framework
-php -l src/Console/Commands/DraftDiscardCommand.php
-wc -l src/Console/Commands/DraftDiscardCommand.php
-php -r 'require "vendor/autoload.php"; var_dump(class_exists("Beaver\\Console\\Commands\\DraftDiscardCommand"));'
-
-*/

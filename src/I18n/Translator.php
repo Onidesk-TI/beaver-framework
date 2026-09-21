@@ -180,7 +180,7 @@ class Translator
         return is_array($data) ? $data : [];
     }
 
-    /** replaces/var/www/onidesk/beaver-framework/src/I18n/Locale.php :placeholders */
+    /** Substitui os placeholders :nome pelos valores em $replace. */
     private function replace(string $line, array $replace): string
     {
         foreach ($replace as $k => $v) {
