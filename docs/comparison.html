@@ -1,0 +1,349 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Laravel vs Beaver — Comparison</title>
+    <style>
+        :root {
+            --bg: #fafafa;
+            --card: #fff;
+            --border: #e0e0e0;
+            --text: #222;
+            --muted: #666;
+            --accent: #005cbf;
+            --ok: #2e7d32;
+            --no: #c62828;
+            --diff: #f57c00;
+            --new: #005cbf;
+            --header-bg: #f5f5f5;
+        }
+
+        * { box-sizing: border-box; }
+
+        body {
+            font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            line-height: 1.6;
+            margin: 0;
+            padding: 2rem 1rem;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        header h1 {
+            margin: 0 0 .5rem;
+            font-size: 2rem;
+        }
+
+        header p {
+            color: var(--muted);
+            margin: 0 0 1rem;
+        }
+
+        .legend {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: .75rem 1.25rem;
+            margin: 0 auto 2rem;
+            display: inline-block;
+            font-size: .9rem;
+            font-family: ui-monospace, "SF Mono", Menlo, monospace;
+        }
+
+        .legend span {
+            margin: 0 .75rem;
+        }
+
+        .legend .ok   { color: var(--ok); }
+        .legend .no   { color: var(--no); }
+        .legend .diff { color: var(--diff); }
+        .legend .new  { color: var(--new); }
+
+        section {
+            margin-bottom: 2rem;
+        }
+
+        section h2 {
+            font-size: 1.35rem;
+            margin: 0 0 1rem;
+            padding-bottom: .5rem;
+            border-bottom: 2px solid var(--border);
+        }
+
+        section h2 code {
+            font-family: ui-monospace, "SF Mono", Menlo, monospace;
+            color: var(--accent);
+            font-size: 1.2rem;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            background: var(--card);
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, .06);
+            font-size: .95rem;
+        }
+
+        th, td {
+            padding: .55rem 1rem;
+            text-align: left;
+            border-bottom: 1px solid var(--border);
+        }
+
+        th {
+            background: var(--header-bg);
+            font-weight: 600;
+            font-size: .85rem;
+            text-transform: uppercase;
+            letter-spacing: .03em;
+            color: var(--muted);
+        }
+
+        th.center, td.center {
+            text-align: center;
+            font-family: ui-monospace, "SF Mono", Menlo, monospace;
+            font-weight: 600;
+            width: 90px;
+        }
+
+        tbody tr:last-child td {
+            border-bottom: 0;
+        }
+
+        tbody tr:hover {
+            background: #f9f9f9;
+        }
+
+        .ok   { color: var(--ok); }
+        .no   { color: var(--no); }
+        .diff { color: var(--diff); }
+        .new  { color: var(--new); }
+
+        td code {
+            font-family: ui-monospace, "SF Mono", Menlo, monospace;
+            font-size: .88rem;
+            background: #f0f0f0;
+            padding: .1rem .35rem;
+            border-radius: 3px;
+        }
+
+        footer {
+            text-align: center;
+            color: var(--muted);
+            font-size: .85rem;
+            margin-top: 3rem;
+            padding-top: 1.5rem;
+            border-top: 1px solid var(--border);
+        }
+
+        footer a {
+            color: var(--accent);
+            text-decoration: none;
+        }
+
+        footer a:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+
+        <header>
+            <h1>Laravel vs Beaver</h1>
+            <p>Feature comparison — CLI, ORM, Schema and Migrations</p>
+            <div class="legend">
+                <span class="ok">v supported</span> ·
+                <span class="no">x not available</span> ·
+                <span class="diff">~ different approach</span> ·
+                <span class="new">* Beaver-only</span>
+            </div>
+        </header>
+
+        <section>
+            <h2><code>make:model</code></h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Feature</th>
+                        <th class="center">Laravel</th>
+                        <th class="center">Beaver</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr><td>Basic scaffold</td><td class="center ok">v</td><td class="center ok">v</td></tr>
+                    <tr><td><code>--migration</code></td><td class="center ok">v</td><td class="center ok">v</td></tr>
+                    <tr><td><code>--controller</code></td><td class="center ok">v</td><td class="center no">x</td></tr>
+                    <tr><td><code>--factory</code></td><td class="center ok">v</td><td class="center no">x</td></tr>
+                    <tr><td><code>--seeder</code></td><td class="center ok">v</td><td class="center no">x</td></tr>
+                    <tr><td><code>--policy</code></td><td class="center ok">v</td><td class="center no">x</td></tr>
+                    <tr><td><code>--event</code> / <code>--observer</code></td><td class="center ok">v</td><td class="center no">x</td></tr>
+                    <tr><td><code>--all</code></td><td class="center ok">v</td><td class="center no">x</td></tr>
+                    <tr><td><code>--schema="..."</code></td><td class="center no">x</td><td class="center new">*</td></tr>
+                    <tr><td><code>--from-file=&lt;migration&gt;</code></td><td class="center no">x</td><td class="center new">*</td></tr>
+                    <tr><td><code>--from-table=&lt;table&gt;</code></td><td class="center no">x</td><td class="center new">*</td></tr>
+                    <tr><td><code>--casts="..."</code></td><td class="center no">x</td><td class="center new">*</td></tr>
+                    <tr><td><code>--hidden="..."</code></td><td class="center no">x</td><td class="center new">*</td></tr>
+                    <tr><td><code>--no-timestamps</code></td><td class="center no">x</td><td class="center new">*</td></tr>
+                    <tr><td><code>--fillable="..."</code></td><td class="center no">x</td><td class="center new">*</td></tr>
+                    <tr><td><code>--plugin</code> / <code>--dev</code> / <code>--path</code></td><td class="center no">x</td><td class="center new">*</td></tr>
+                    <tr><td>Auto pluralization</td><td class="center ok">v</td><td class="center ok">v</td></tr>
+                    <tr><td>Type inference</td><td class="center diff">~</td><td class="center ok">v</td></tr>
+                    <tr><td>Re-create prompt</td><td class="center ok">v</td><td class="center ok">v</td></tr>
+                </tbody>
+            </table>
+        </section>
+
+        <section>
+            <h2><code>make:migration</code></h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Feature</th>
+                        <th class="center">Laravel</th>
+                        <th class="center">Beaver</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr><td>Basic scaffold</td><td class="center ok">v</td><td class="center ok">v</td></tr>
+                    <tr><td><code>--create=&lt;table&gt;</code></td><td class="center ok">v</td><td class="center no">x</td></tr>
+                    <tr><td><code>--table=&lt;table&gt;</code></td><td class="center ok">v</td><td class="center no">x</td></tr>
+                    <tr><td><code>--path=</code></td><td class="center ok">v</td><td class="center ok">v</td></tr>
+                    <tr><td><code>--schema="..."</code></td><td class="center no">x</td><td class="center new">*</td></tr>
+                    <tr><td><code>--raw="SQL"</code></td><td class="center no">x</td><td class="center new">*</td></tr>
+                    <tr><td><code>--plugin</code></td><td class="center no">x</td><td class="center new">*</td></tr>
+                    <tr><td><code>--dev</code></td><td class="center no">x</td><td class="center new">*</td></tr>
+                    <tr><td>Duplicate check</td><td class="center no">x</td><td class="center new">*</td></tr>
+                    <tr><td>Already-ran check</td><td class="center no">x</td><td class="center new">*</td></tr>
+                    <tr><td>Re-create prompt</td><td class="center no">x</td><td class="center ok">v</td></tr>
+                </tbody>
+            </table>
+        </section>
+
+        <section>
+            <h2><code>make:plugin</code></h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Feature</th>
+                        <th class="center">Laravel</th>
+                        <th class="center">Beaver</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr><td>Plugin scaffolding</td><td class="center no">x</td><td class="center new">*</td></tr>
+                    <tr><td><code>--prod</code> / <code>--dest</code> / <code>--author</code></td><td class="center no">x</td><td class="center new">*</td></tr>
+                    <tr><td>Re-create prompt</td><td class="center no">x</td><td class="center ok">v</td></tr>
+                </tbody>
+            </table>
+        </section>
+
+        <section>
+            <h2>Migrations runner</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Feature</th>
+                        <th class="center">Laravel</th>
+                        <th class="center">Beaver</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr><td><code>migrate</code></td><td class="center ok">v</td><td class="center ok">v</td></tr>
+                    <tr><td><code>migrate:rollback</code></td><td class="center ok">v</td><td class="center ok">v</td></tr>
+                    <tr><td><code>migrate:status</code></td><td class="center ok">v</td><td class="center ok">v</td></tr>
+                    <tr><td><code>migrate:fresh</code></td><td class="center ok">v</td><td class="center no">x</td></tr>
+                    <tr><td><code>migrate:reset</code></td><td class="center ok">v</td><td class="center no">x</td></tr>
+                    <tr><td><code>migrate:refresh</code></td><td class="center ok">v</td><td class="center no">x</td></tr>
+                    <tr><td><code>migrate --step</code></td><td class="center ok">v</td><td class="center no">x</td></tr>
+                    <tr><td><code>migrate --pretend</code></td><td class="center ok">v</td><td class="center no">x</td></tr>
+                    <tr><td><code>migrate --force</code></td><td class="center ok">v</td><td class="center no">x</td></tr>
+                    <tr><td>Multi-path</td><td class="center no">x</td><td class="center new">*</td></tr>
+                    <tr><td><code>ran_at</code> / <code>batch</code></td><td class="center ok">v</td><td class="center ok">v</td></tr>
+                </tbody>
+            </table>
+        </section>
+
+        <section>
+            <h2>ORM / Model</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Feature</th>
+                        <th class="center">Laravel</th>
+                        <th class="center">Beaver</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr><td>ActiveRecord</td><td class="center ok">v</td><td class="center ok">v</td></tr>
+                    <tr><td><code>find()</code> / <code>findOrFail()</code></td><td class="center ok">v</td><td class="center ok">v</td></tr>
+                    <tr><td><code>all()</code> / <code>where()</code> / <code>orderBy()</code></td><td class="center ok">v</td><td class="center ok">v</td></tr>
+                    <tr><td><code>create()</code> / <code>save()</code> / <code>delete()</code></td><td class="center ok">v</td><td class="center ok">v</td></tr>
+                    <tr><td><code>$fillable</code> / <code>$hidden</code></td><td class="center ok">v</td><td class="center ok">v</td></tr>
+                    <tr><td><code>$casts</code></td><td class="center ok">v</td><td class="center ok">v</td></tr>
+                    <tr><td><code>$appends</code></td><td class="center ok">v</td><td class="center no">x</td></tr>
+                    <tr><td>Date driver</td><td class="center no">x</td><td class="center new">*</td></tr>
+                    <tr><td>Accessors</td><td class="center ok">v</td><td class="center no">x</td></tr>
+                    <tr><td>Mutators</td><td class="center ok">v</td><td class="center no">x</td></tr>
+                    <tr><td>Relationships</td><td class="center ok">v</td><td class="center no">x</td></tr>
+                    <tr><td>Eager loading</td><td class="center ok">v</td><td class="center no">x</td></tr>
+                    <tr><td>Soft deletes</td><td class="center ok">v</td><td class="center no">x</td></tr>
+                    <tr><td>Scopes</td><td class="center ok">v</td><td class="center no">x</td></tr>
+                    <tr><td>Events / Observers</td><td class="center ok">v</td><td class="center no">x</td></tr>
+                    <tr><td><code>firstOrCreate()</code> / <code>updateOrCreate()</code></td><td class="center ok">v</td><td class="center no">x</td></tr>
+                    <tr><td>Pagination</td><td class="center ok">v</td><td class="center no">x</td></tr>
+                    <tr><td><code>DB::table()</code></td><td class="center ok">v</td><td class="center no">x</td></tr>
+                </tbody>
+            </table>
+        </section>
+
+        <section>
+            <h2>Schema / Blueprint</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Feature</th>
+                        <th class="center">Laravel</th>
+                        <th class="center">Beaver</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr><td><code>Schema::create()</code> closure</td><td class="center ok">v</td><td class="center ok">v</td></tr>
+                    <tr><td><code>Schema::create()</code> array</td><td class="center no">x</td><td class="center new">*</td></tr>
+                    <tr><td><code>Schema::table()</code></td><td class="center ok">v</td><td class="center no">x</td></tr>
+                    <tr><td><code>Schema::drop()</code> / <code>dropIfExists()</code></td><td class="center ok">v</td><td class="center ok">v</td></tr>
+                    <tr><td><code>Schema::hasTable()</code></td><td class="center ok">v</td><td class="center ok">v</td></tr>
+                    <tr><td><code>Schema::raw()</code></td><td class="center diff">~</td><td class="center ok">v</td></tr>
+                    <tr><td><code>Schema::driver()</code></td><td class="center diff">~</td><td class="center ok">v</td></tr>
+                    <tr><td>Common column types</td><td class="center ok">v</td><td class="center ok">v</td></tr>
+                    <tr><td><code>softDeletes()</code> / <code>rememberToken()</code></td><td class="center ok">v</td><td class="center no">x</td></tr>
+                    <tr><td><code>-&gt;change()</code></td><td class="center ok">v</td><td class="center no">x</td></tr>
+                    <tr><td>Composite indexes</td><td class="center ok">v</td><td class="center no">x</td></tr>
+                    <tr><td>Column comments</td><td class="center ok">v</td><td class="center no">x</td></tr>
+                </tbody>
+            </table>
+        </section>
+
+        <footer>
+            <p>
+                <a href="https://github.com/Frank-Onidesk/beaver-framework">Beaver Framework</a>
+                · v0.1.0 · Comparison last updated 2026-09-13
+            </p>
+        </footer>
+
+    </div>
+</body>
+</html>

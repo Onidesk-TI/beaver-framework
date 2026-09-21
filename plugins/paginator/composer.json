@@ -1,0 +1,14 @@
+{
+    "name": "onidesk/beaver-paginator",
+    "description": "Beaver Paginator — componente de paginação",
+    "type": "beaver-plugin",
+    "license": "GPL-3.0-or-later",
+    "require": { "php": ">=8.1" },
+    "autoload": {
+        "psr-4": { "Beaver\\Plugins\\Paginator\\": "src/" },
+        "files": ["src/helpers.php"]
+    },
+    "authors": [
+        { "name": "Franco", "email": "onidesk@outlook.com" }
+    ]
+}

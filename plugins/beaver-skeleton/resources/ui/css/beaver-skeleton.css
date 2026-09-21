@@ -1,0 +1,129 @@
+:root{
+  --amber-1:#FFD79A;
+  --amber-2:#FF9A3C;
+  --amber-3:#FF6B35;
+  --amber-glow:rgba(255,154,60,.28);
+  --amber-line:rgba(255,154,60,.35);
+  --amber-soft:rgba(255,154,60,.10);
+  --amber-pale:rgba(255,154,60,.06);
+
+  --brown:#8B5E3C;
+  --brown-dark:#6B4423;
+  --brown-light:#A0714F;
+
+  --bg:#FAF6F1;
+  --surface:#FFFFFF;
+  --text:#2C2419;
+  --muted:#7A6A58;
+  --soft:#A89A88;
+
+  --mono:'JetBrains Mono',ui-monospace,SFMono-Regular,monospace;
+}
+
+*{box-sizing:border-box;margin:0;padding:0}
+
+body{
+  font-family:'Inter',system-ui,-apple-system,sans-serif;
+  background:var(--bg);
+  color:var(--text);
+  line-height:1.65;
+  -webkit-font-smoothing:antialiased;
+  min-height:100vh;
+  display:flex;
+  justify-content:center;
+  padding:64px 24px;
+  background-image:
+    radial-gradient(900px 500px at 12% -8%, rgba(160,113,79,.14), transparent 62%),
+    radial-gradient(760px 460px at 88% 4%, rgba(255,154,60,.10), transparent 60%);
+  background-attachment:fixed;
+}
+
+.sk{width:100%;max-width:880px}
+
+.sk-head{display:flex;align-items:center;gap:16px;margin-bottom:24px}
+.sk-logo{
+  width:56px;height:56px;border-radius:16px;
+  display:grid;place-items:center;font-size:1.8rem;
+  background:linear-gradient(150deg,var(--amber-1),var(--amber-2) 60%,var(--amber-3));
+  box-shadow:0 12px 26px -14px var(--amber-glow);
+  flex:none;
+}
+.sk-head h1{font-size:1.9rem;font-weight:800;letter-spacing:-.03em;line-height:1.1}
+.sk-accent{
+  background:linear-gradient(115deg,var(--brown-light),var(--brown) 50%,var(--brown-dark));
+  -webkit-background-clip:text;background-clip:text;color:transparent;
+}
+.sk-sub{color:var(--muted);font-size:.9rem;margin-top:2px}
+
+.sk-pill{
+  display:inline-flex;align-items:center;gap:9px;
+  padding:7px 15px 7px 12px;border-radius:100px;
+  background:var(--amber-soft);border:1px solid var(--amber-line);
+  font-size:.82rem;font-weight:600;color:var(--brown-dark);
+  margin-bottom:28px;
+}
+.sk-dot{
+  width:8px;height:8px;border-radius:50%;
+  background:var(--amber-2);
+  box-shadow:0 0 0 0 var(--amber-glow);
+  animation:sk-pulse 2.2s infinite;
+}
+@keyframes sk-pulse{
+  0%{box-shadow:0 0 0 0 rgba(255,154,60,.55)}
+  70%{box-shadow:0 0 0 9px rgba(255,154,60,0)}
+  100%{box-shadow:0 0 0 0 rgba(255,154,60,0)}
+}
+
+.sk-grid{
+  display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
+  gap:14px;margin-bottom:28px;
+}
+.sk-card{
+  background:var(--surface);border:1px solid var(--amber-line);
+  border-radius:16px;padding:20px;
+  box-shadow:0 1px 2px rgba(60,40,20,.05);
+  transition:transform .2s, box-shadow .2s, border-color .2s;
+}
+.sk-card:hover{
+  transform:translateY(-2px);
+  box-shadow:0 18px 32px -22px var(--amber-glow);
+  border-color:var(--amber-2);
+}
+.sk-icon{display:inline-block;font-size:1.5rem;margin-bottom:10px}
+.sk-card h2{
+  font-size:1rem;font-weight:700;margin-bottom:6px;
+  color:var(--brown-dark);letter-spacing:-.01em;
+}
+.sk-card p{font-size:.85rem;color:var(--muted);line-height:1.55}
+
+.sk-code{
+  position:relative;background:#2A1F14;border-radius:14px;
+  border:1px solid var(--amber-line);overflow:hidden;margin-bottom:28px;
+}
+.sk-code pre{
+  margin:0;padding:16px 18px;overflow-x:auto;
+  font-family:var(--mono);font-size:.82rem;line-height:1.7;
+  color:#FFD79A;text-shadow:0 0 6px rgba(255,154,60,.25);
+}
+.sk-code code{white-space:pre}
+.sk-copy{
+  position:absolute;top:10px;right:10px;
+  background:rgba(255,154,60,.14);border:1px solid rgba(255,154,60,.32);
+  color:#FFD79A;font:inherit;font-size:.7rem;font-weight:600;
+  padding:5px 10px;border-radius:7px;cursor:pointer;
+  font-family:var(--mono);transition:background .2s;
+}
+.sk-copy:hover{background:rgba(255,154,60,.24)}
+.sk-copy.is-copied{background:rgba(255,154,60,.32);color:#FFF1DE}
+
+.sk-foot{text-align:center;font-size:.82rem;color:var(--muted);padding-top:8px}
+.sk-foot code{
+  font-family:var(--mono);font-size:.9em;background:var(--amber-soft);
+  color:var(--brown-dark);padding:2px 7px;border-radius:6px;
+}
+
+.sk-card code{
+  font-family:var(--mono);font-size:.82em;background:var(--amber-pale);
+  color:var(--brown-dark);padding:1px 6px;border-radius:5px;
+  border:1px solid var(--amber-line);
+}

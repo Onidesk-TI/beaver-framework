@@ -1,0 +1,26 @@
+========================================================================
+  CHANGELOG -- Beaver Skeleton
+========================================================================
+
+  Formato baseado em Keep a Changelog.
+  Versionamento SemVer.
+
+------------------------------------------------------------------------
+  [Unreleased]
+------------------------------------------------------------------------
+
+------------------------------------------------------------------------
+  [0.1.0] -- 2026-09-21
+------------------------------------------------------------------------
+
+  Adicionado
+  ----------
+  - Estrutura base do plugin (plugin.json, composer.json)
+  - Classe principal SkeletonPlugin extends PluginBase
+  - Rotas /skeleton e assets /plugins/beaver-skeleton/{css,js}/{file}
+  - View de exemplo com tema âmbar
+  - CSS e JS base
+  - Testes PHPUnit
+  - README, INSTALL, HELP, CHANGELOG, LICENSE, .editorconfig
+
+========================================================================

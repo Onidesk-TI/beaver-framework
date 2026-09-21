@@ -1,0 +1,13 @@
+{
+    "name": "Paginator",
+    "slug": "paginator",
+    "version": "0.1.0",
+    "author": "Onidesk",
+    "description": "Componente de paginação reutilizável — PHP + CSS + JS",
+    "namespace": "Beaver\\Plugins\\Paginator",
+    "main": "src/PaginatorPlugin.php",
+    "beaver_version": ">=0.1.0",
+    "requires": { "php": ">=8.1" },
+    "routes": "routes/web.php",
+    "enabled": true
+}

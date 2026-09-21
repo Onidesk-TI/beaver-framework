@@ -1,0 +1,13 @@
+{
+    "name": "Skeleton",
+    "slug": "skeleton",
+    "version": "0.1.0",
+    "author": "Onidesk",
+    "description": "Esqueleto oficial para criar plugins Beaver",
+    "namespace": "Beaver\\Plugins\\Skeleton",
+    "main": "src/SkeletonPlugin.php",
+    "beaver_version": ">=0.1.0",
+    "requires": { "php": ">=8.1" },
+    "routes": "routes/web.php",
+    "enabled": true
+}

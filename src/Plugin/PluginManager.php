@@ -1,0 +1,200 @@
+<?php
+
+/**
+ * Beaver Framework — Modern PHP framework with a plugin ecosystem.
+ *
+ * @package    Beaver Framework
+ * @version    0.1.0
+ * @author     Franco <onidesk@outlook.com>
+ * @copyright  2026 Onidesk
+ * @license    MIT <https://opensource.org/licenses/MIT>
+ * @link       https://github.com/Onidesk-TI/beaver-framework
+ */
+
+namespace Beaver\Plugin;
+
+use Beaver\Foundation\Application;
+use Beaver\Sdk\ManifestValidator;
+
+class PluginManager
+{
+    private array $plugins = [];
+    private bool $discovered = false;
+    private bool $booted = false;
+
+    public function __construct(private Application $app)
+    {
+    }
+
+    public function discover(): self
+    {
+        if ($this->discovered) {
+            return $this;
+        }
+        $this->discovered = true;
+
+        $mode = $this->app->config('app.plugins.mode', 'prod');
+
+        // Ordem importa: o primeiro plugin encontrado com um dado slug ganha.
+        // Por isso 'internal_path' vem primeiro — plugins internos do framework
+        // não podem ser sobrepostos por plugins externos.
+        $paths = match ($mode) {
+            'dev' => [
+                ['path' => $this->app->config('app.plugins.internal_path'), 'source' => 'internal'],
+                ['path' => $this->app->config('app.plugins.dev_path'),      'source' => 'dev'],
+                ['path' => $this->app->config('app.plugins.staging_path'),  'source' => 'staging'],
+                ['path' => $this->app->config('app.plugins.path'),          'source' => 'prod'],
+            ],
+            'staging' => [
+                ['path' => $this->app->config('app.plugins.internal_path'), 'source' => 'internal'],
+                ['path' => $this->app->config('app.plugins.staging_path'),  'source' => 'staging'],
+                ['path' => $this->app->config('app.plugins.path'),          'source' => 'prod'],
+            ],
+            default => [
+                ['path' => $this->app->config('app.plugins.internal_path'), 'source' => 'internal'],
+                ['path' => $this->app->config('app.plugins.path'),          'source' => 'prod'],
+            ],
+        };
+
+        foreach ($paths as $entry) {
+            $base = $entry['path'];
+            if (!$base || !is_dir($base)) {
+                continue;
+            }
+
+            foreach (glob($base . '/*', GLOB_ONLYDIR) as $dir) {
+                $slug = basename($dir);
+                if (str_starts_with($slug, '.')) {
+                    continue;
+                }
+                if (isset($this->plugins[$slug])) {
+                    continue;
+                }
+
+                $manifestFile = $dir . '/plugin.json';
+                if (!is_file($manifestFile)) {
+                    continue;
+                }
+
+                $manifest = json_decode((string) file_get_contents($manifestFile), true);
+                if (!is_array($manifest) || empty($manifest['slug'])) {
+                    error_log("[PluginManager] Manifest inválido em: $manifestFile");
+                    continue;
+                }
+
+                $this->plugins[$manifest['slug']] = [
+                    'path'     => $dir,
+                    'manifest' => $manifest,
+                    'instance' => null,
+                    'source'   => $entry['source'],
+                ];
+            }
+        }
+
+        return $this;
+    }
+
+    public function boot(): void
+    {
+        if ($this->booted) {
+            return;
+        }
+        $this->booted = true;
+
+        foreach ($this->plugins as $slug => $data) {
+            try {
+                $instance = $this->instantiate($data);
+                $this->plugins[$slug]['instance'] = $instance;
+                $instance->boot();
+            } catch (\Throwable $e) {
+                error_log("[PluginManager] Plugin '$slug' falhou: " . $e->getMessage());
+            }
+        }
+    }
+
+    private function instantiate(array $data): PluginBase
+    {
+        $manifest = $data['manifest'];
+        $path     = $data['path'];
+
+        // --- SDK: validação de manifesto ---
+        $errors = ManifestValidator::validate($manifest);
+        if ($errors) {
+            throw new \RuntimeException(
+                "plugin.json inválido: " . implode('; ', $errors)
+            );
+        }
+        // --- /SDK ---
+
+        $pluginAutoload = $path . '/vendor/autoload.php';
+        if (is_file($pluginAutoload)) {
+            require_once $pluginAutoload;
+        }
+
+        $mainFile = $path . '/' . ($manifest['main'] ?? 'Plugin.php');
+        if (!is_file($mainFile)) {
+            throw new \RuntimeException("Main file não existe: $mainFile");
+        }
+
+        require_once $mainFile;
+
+        $namespace = $manifest['namespace'] ?? null;
+        $main      = $manifest['main'] ?? null;
+
+        if (!$namespace || !$main) {
+            throw new \RuntimeException("Manifest sem 'namespace' ou 'main'");
+        }
+
+        $className = $namespace . '\\' . basename($main, '.php');
+
+        if (!class_exists($className)) {
+            throw new \RuntimeException("Classe não encontrada: $className");
+        }
+
+        $instance = new $className($path, $manifest);
+
+        if (!$instance instanceof PluginBase) {
+            throw new \RuntimeException("$className deve estender PluginBase");
+        }
+
+        return $instance;
+    }
+
+    public function all(): array
+    {
+        $out = [];
+        foreach ($this->plugins as $slug => $data) {
+            if ($data['instance'] instanceof PluginBase) {
+                $out[$slug] = $data['instance'];
+            }
+        }
+        return $out;
+    }
+
+    public function get(string $slug): ?PluginBase
+    {
+        return $this->plugins[$slug]['instance'] ?? null;
+    }
+
+    public function has(string $slug): bool
+    {
+        return isset($this->plugins[$slug]);
+    }
+
+    public function manifests(): array
+    {
+        return array_map(fn($p) => [
+            'slug'    => $p['manifest']['slug']    ?? '',
+            'name'    => $p['manifest']['name']    ?? '',
+            'version' => $p['manifest']['version'] ?? '',
+            'path'    => $p['path'],
+            'source'  => $p['source'],
+            'booted'  => $p['instance'] instanceof PluginBase,
+        ], $this->plugins);
+    }
+
+    public function mode(): string
+    {
+        return $this->app->config('app.plugins.mode', 'prod');
+    }
+}

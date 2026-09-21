@@ -1,0 +1,65 @@
+.paginator{
+    display:flex;
+    align-items:center;
+    gap:6px;
+    font-family:'Inter',system-ui,sans-serif;
+    font-size:.82rem;
+    flex-wrap:wrap;
+    padding:12px 0;
+    user-select:none;
+}
+.pg-btn{
+    display:inline-flex;
+    align-items:center;
+    justify-content:center;
+    min-width:32px;
+    height:32px;
+    padding:0 10px;
+    border-radius:8px;
+    text-decoration:none;
+    color:#B9C4D4;
+    background:rgba(255,255,255,.04);
+    border:1px solid rgba(255,255,255,.08);
+    transition:.15s ease;
+    font-weight:500;
+    line-height:1;
+}
+.pg-btn:hover{
+    background:rgba(255,255,255,.08);
+    color:#fff;
+    border-color:rgba(255,255,255,.14);
+}
+.pg-btn.is-active{
+    background:linear-gradient(135deg,#FF9A3C,#FF6B35);
+    border-color:transparent;
+    color:#1A1208;
+    font-weight:700;
+    cursor:default;
+}
+.pg-btn.is-disabled{
+    opacity:.35;
+    cursor:not-allowed;
+    pointer-events:none;
+}
+.pg-gap{
+    padding:0 4px;
+    color:#5F6D80;
+    font-weight:600;
+}
+.pg-info{
+    margin-right:8px;
+    font-size:.76rem;
+    color:#8895A7;
+    font-family:'JetBrains Mono',monospace;
+}
+
+/* Tema claro — .paginator.is-light */
+.paginator.is-light .pg-btn{
+    background:#f4f5f7;
+    border-color:#e1e4e8;
+    color:#4a5568;
+}
+.paginator.is-light .pg-btn:hover{background:#e9ecef;color:#1a202c}
+.paginator.is-light .pg-btn.is-active{background:linear-gradient(135deg,#FF9A3C,#FF6B35);color:#fff}
+.paginator.is-light .pg-info{color:#718096}
+.paginator.is-light .pg-gap{color:#a0aec0}

@@ -1,0 +1,17 @@
+#!/usr/bin/env php
+<?php
+
+$frameworkPath = __DIR__;
+$projectPath   = getcwd();
+
+require $frameworkPath . '/vendor/autoload.php';
+
+use Beaver\Foundation\Application as Foundation;
+use Beaver\Console\Application as Console;
+
+// 1. Container da app — carrega config, env, views, plugins
+new Foundation($frameworkPath);
+
+// 2. CLI
+$app = new Console($frameworkPath, $projectPath);
+exit($app->run($argv));

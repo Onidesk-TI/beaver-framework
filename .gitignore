@@ -1,0 +1,113 @@
+# Credenciais locais (nunca versionar)
+/.env
+/.env.local
+
+# Exceção: o exemplo é versionado
+!/.env.example
+
+# Deepseek 
+.deepseekignore
+
+# Dependências do Composer
+/vendor/
+
+# SQLite local (dados da máquina)
+/storage/*.sqlite
+/storage/*.sqlite-*
+/storage/*.sqlite3
+
+# Certificados TLS (chaves privadas!)
+/storage/certificates/*
+!/storage/certificates/.gitkeep
+
+# Storage (ficheiros de runtime)
+/storage/logs/*
+/storage/cache/*
+/storage/sessions/*
+/storage/tmp/*
+/storage/uploads/*
+!/storage/*/.gitkeep
+
+# Backups
+*.bak
+*.bak-*
+*.backup
+
+# Chaves e certificados (qualquer sítio)
+*.key
+*.pem
+*.p12
+*.pfx
+
+# Ficheiros de sistema
+.DS_Store
+Thumbs.db
+*.swp
+*~
+*:Zone.Identifier
+
+# IDE
+.idea/
+.vscode/
+*.sublime-*
+
+# ── SqlWizard ───────────────────────────────────
+# Ligações (contém passwords)
+plugins/sqlwizard/storage/connections.local.json
+
+# Drafts (work-in-progress)
+/database/drafts/
+
+# Bases de dados de teste
+*.db
+*.sqlite
+!/database/*.sqlite.example
+
+# Backups
+*.save
+
+# Ficheiros criados por acidente (root do projeto)
+/cat
+/onidesk
+/path
+/public/c:\
+php-server.log
+
+# ── Composer lock (framework/library, não app) ──
+/composer.lock
+
+# Public assets (idem)
+
+# ── Cache do bootstrap ──
+/bootstrap/cache/
+
+# ── Ficheiros lixo (heredocs mal colados) ──
+/false,
+/main
+/mysql,
+/null,
+/original
+/sql,
+/basePath
+
+# ── Plugins ──
+# O framework é o motor. Cada plugin vive no seu próprio repositório
+# em /var/www/onidesk/<nome>/ (ou onde for instalado) e aparece em
+# plugins/ como symlink. Só o .gitkeep é versionado.
+
+/plugins/*
+!/plugins/.gitkeep
+
+# Nativos
+!/plugins/paginator/
+!/plugins/paginator/**
+!/plugins/beaver-skeleton/
+!/plugins/beaver-skeleton/**
+
+/public/plugins/*
+!/public/plugins/.gitkeep
+
+# Vendor do Composer em qualquer nível (inclui plugins)
+**/vendor/
+**/composer.lock
+

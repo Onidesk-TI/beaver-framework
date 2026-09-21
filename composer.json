@@ -1,0 +1,46 @@
+{
+    "name": "beaver/framework",
+    "description": "Beaver Framework - Modern PHP Framework",
+    "type": "library",
+    "license": "MIT",
+    "keywords": [
+        "framework",
+        "php",
+        "beaver",
+        "mvc"
+    ],
+    "minimum-stability": "stable",
+    "prefer-stable": true,
+    "require": {
+        "php": ">=8.1",
+        "ext-openssl": "*",
+        "ext-pdo": "*",
+        "ext-json": "*"
+    },
+    "autoload": {
+        "psr-4": {
+            "Beaver\\": "src/",
+            "App\\": "app/",
+            "Beaver\\Sdk\\": "sdk/src/",
+            "Beaver\\Plugins\\Console\\": "plugins/console/src/",
+            "Beaver\\Plugins\\Frankei\\": "plugins/frankei/src/",
+            "Beaver\\Plugins\\Library\\": "plugins/library/src/",
+            "Beaver\\Plugins\\Nav\\": "plugins/beaver-nav/src/",
+            "Beaver\\Plugins\\SqlWizard\\": "plugins/sqlwizard/src/",
+            "Beaver\\Plugins\\Tips\\": "plugins/tips/src/",
+            "Beaver\\Plugins\\UpdateManager\\": "plugins/update-manager/src/",
+            "Beaver\\Plugins\\HelloBeaver\\": "plugins/hello-beaver/src/",
+            "Beaver\\Plugins\\MeuPlugin\\": "plugins/meu-plugin/src/"
+        },
+        "files": [
+            "src/View/helpers.php"
+        ]
+    },
+    "bin": [
+        "beaver"
+    ],
+    "config": {
+        "optimize-autoloader": true,
+        "sort-packages": true
+    }
+}

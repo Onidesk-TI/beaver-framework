@@ -1,0 +1,647 @@
+========================================================================
+  INSTALL -- Beaver Skeleton
+  Manual completo de instalação, configuração e remoção
+========================================================================
+
+  ÍNDICE
+  ------
+   1.  Requisitos
+   2.  Visão geral da instalação
+   3.  Instalação rápida (TL;DR)
+   4.  Instalação passo a passo
+   5.  Verificação
+   6.  Arrancar o servidor de desenvolvimento
+   7.  Testar o plugin
+   8.  Correr os testes unitários
+   9.  Atualizar o plugin
+  10.  Remover o plugin
+  11.  Renomear para outro plugin
+  12.  Estrutura de ficheiros
+  13.  Resolução de problemas
+  14.  Checklist final
+
+========================================================================
+  1. REQUISITOS
+========================================================================
+
+  Requisito              Versão mínima   Verificar
+  ---------------------  --------------  --------------------------
+  PHP                    >= 8.1          php -v
+  Composer               >= 2.0          composer -V
+  Beaver Framework       >= 0.1.0        cat composer.json
+  Extensão json          --              php -m | grep json
+  Extensão pdo           --              php -m | grep pdo
+  git                    --              git --version
+
+  Utilitários opcionais:
+
+    sudo apt install tree          # ver estrutura em árvore
+    sudo apt install dos2unix      # converter CRLF -> LF
+
+  Cobertura de código (opcional, para relatórios):
+
+    sudo apt install php8.3-pcov   # mais leve
+    sudo phpenmod pcov
+
+    # ou
+    sudo apt install php8.3-xdebug
+    sudo phpenmod xdebug
+
+  Utilizador do sistema:
+
+    Os comandos assumem franco:franco. Se o teu for outro, ajusta:
+
+      OWNER="franco:franco"
+
+========================================================================
+  2. VISÃO GERAL DA INSTALAÇÃO
+========================================================================
+
+  /var/www/onidesk/
+  |-- beaver-skeleton/                          <- FASE 1: pasta do plugin
+  |   |-- plugin.json
+  |   |-- composer.json
+  |   |-- src/SkeletonPlugin.php
+  |   |-- routes/web.php
+  |   `-- resources/
+  |
+  `-- beaver-framework/                         <- FASE 2: ligação
+      |-- plugins/
+      |   `-- beaver-skeleton -> ../../beaver-skeleton
+      `-- public/plugins/
+          `-- beaver-skeleton -> .../resources/ui
+
+  FASE 1 -- o código vive em /var/www/onidesk/beaver-skeleton/
+  FASE 2 -- dois symlinks ligam o plugin ao framework.
+
+  NOTA SOBRE URL DOS ASSETS
+  -------------------------
+  O URL de um asset usa SEMPRE o nome da pasta do plugin, NÃO o "slug"
+  do plugin.json.
+
+    pasta:  beaver-skeleton/
+    URL:    /plugins/beaver-skeleton/css/beaver-skeleton.css
+
+    pasta:  beaver-nav/
+    URL:    /plugins/beaver-nav/css/nav.css
+
+========================================================================
+  3. INSTALAÇÃO RÁPIDA (TL;DR)
+========================================================================
+
+  BASE=/var/www/onidesk
+  FRAMEWORK=$BASE/beaver-framework
+  PLUGIN=$BASE/beaver-skeleton
+  OWNER=franco:franco
+
+  cd "$BASE"
+  git clone https://github.com/Onidesk-TI/beaver-console.git beaver-skeleton
+  cd "$PLUGIN"
+  composer install
+
+  sudo ln -sfn "$PLUGIN"              "$FRAMEWORK/plugins/beaver-skeleton"
+  sudo ln -sfn "$PLUGIN/resources/ui" "$FRAMEWORK/public/plugins/beaver-skeleton"
+
+  sudo chown -R "$OWNER" "$PLUGIN"
+  sudo chown -h "$OWNER" \
+    "$FRAMEWORK/plugins/beaver-skeleton" \
+    "$FRAMEWORK/public/plugins/beaver-skeleton"
+
+  find "$PLUGIN" -type d -exec chmod 755 {} \;
+  find "$PLUGIN" -type f -exec chmod 644 {} \;
+
+  cd "$FRAMEWORK"
+  php -S localhost:9000 -t public public/index.php
+
+  Abre: http://localhost:9000/skeleton
+
+========================================================================
+  4. INSTALAÇÃO PASSO A PASSO
+========================================================================
+
+  4.1  Clonar o repositório
+  -------------------------
+
+    cd /var/www/onidesk
+    git clone https://github.com/Onidesk-TI/beaver-console.git beaver-skeleton
+    cd beaver-skeleton
+
+    Se for privado, usa token:
+
+    git clone https://<seu-token>@github.com/Onidesk-TI/beaver-console.git beaver-skeleton
+
+    Se já tens ZIP:
+
+    cd /var/www/onidesk
+    mkdir -p beaver-skeleton
+    cd beaver-skeleton
+    unzip /caminho/para/beaver-skeleton.zip
+
+  4.2  Instalar dependências
+  --------------------------
+
+    cd /var/www/onidesk/beaver-skeleton
+    composer install
+    composer dump-autoload -o      # regenera o autoload
+
+    Se o composer reclamar do lock desatualizado:
+
+    composer update
+    # ou
+    composer require --dev phpunit/phpunit
+
+  4.3  Criar os symlinks
+  ----------------------
+
+    PLUGIN=/var/www/onidesk/beaver-skeleton
+    FRAMEWORK=/var/www/onidesk/beaver-framework
+
+    sudo ln -sfn "$PLUGIN"              "$FRAMEWORK/plugins/beaver-skeleton"
+    sudo ln -sfn "$PLUGIN/resources/ui" "$FRAMEWORK/public/plugins/beaver-skeleton"
+
+    O -sfn recria o symlink caso exista (idempotente).
+
+  4.4  Ajustar permissões
+  -----------------------
+
+    OWNER=franco:franco
+    PLUGIN=/var/www/onidesk/beaver-skeleton
+    FRAMEWORK=/var/www/onidesk/beaver-framework
+
+    sudo chown -R "$OWNER" "$PLUGIN"
+    sudo find "$PLUGIN" -type d -exec chmod 755 {} \;
+    sudo find "$PLUGIN" -type f -exec chmod 644 {} \;
+    sudo chown -h "$OWNER" \
+      "$FRAMEWORK/plugins/beaver-skeleton" \
+      "$FRAMEWORK/public/plugins/beaver-skeleton"
+
+  4.5  Registar no framework
+  --------------------------
+
+    O Beaver descobre plugins pela pasta plugins/ do framework, lendo o
+    plugin.json de cada um. Não precisas de editar nada manualmente se
+    os symlinks estiverem criados.
+
+    Confirma:
+
+    ls -la /var/www/onidesk/beaver-framework/plugins/beaver-skeleton
+    ls -la /var/www/onidesk/beaver-framework/public/plugins/beaver-skeleton
+
+  4.6  Configurar variáveis de ambiente
+  -------------------------------------
+
+    O plugin traz .env.example e .env.testing.
+
+    Copia o exemplo:
+
+    cd /var/www/onidesk/beaver-skeleton
+    cp .env.example .env
+
+    Edita conforme necessário:
+
+    APP_ENV=local
+    APP_DEBUG=true
+    SKELETON_SLUG=skeleton
+    SKELETON_ASSETS_PREFIX=/plugins/beaver-skeleton
+    DB_CONNECTION=sqlite
+    DB_DATABASE=/var/www/onidesk/beaver-framework/database/beaver.sqlite
+
+    O ficheiro .env está no .gitignore e NÃO deve ser commitado.
+    O .env.example e .env.testing são commitáveis.
+
+========================================================================
+  5. VERIFICAÇÃO
+========================================================================
+
+  5.1  Ficheiros essenciais
+  -------------------------
+
+    cd /var/www/onidesk/beaver-skeleton
+    ls -la plugin.json composer.json phpunit.xml
+    ls -la README.txt INSTALL.txt HELP.txt CHANGELOG.txt LICENSE.txt
+    ls -la .gitignore .gitattributes .editorconfig
+    ls -la .env.example .env.testing
+    ls -la config/config.php
+    ls -la src/SkeletonPlugin.php
+    ls -la src/Support/helpers.php
+    ls -la routes/web.php
+    ls -la resources/views/index.php
+    ls -la resources/ui/css/beaver-skeleton.css
+    ls -la resources/ui/js/beaver-skeleton.js
+    ls -la tests/PluginTest.php tests/HelpersTest.php
+
+  5.2  Manifest válido
+  --------------------
+
+    cat plugin.json | php -r 'echo json_encode(json_decode(stream_get_contents(STDIN)), JSON_PRETTY_PRINT|JSON_UNESCAPED_SLASHES), PHP_EOL;'
+
+  5.3  Sintaxe PHP
+  ----------------
+
+    php -l src/SkeletonPlugin.php
+    php -l src/Support/helpers.php
+    php -l routes/web.php
+    php -l resources/views/index.php
+
+    Esperado: "No syntax errors detected"
+
+  5.4  Sem restos de template
+  ---------------------------
+
+    grep -rn "__NAME__\|__STUDLY__" . --exclude-dir=vendor 2>/dev/null
+
+    Esperado: vazio.
+
+  5.5  Symlinks corretos
+  ----------------------
+
+    ls -la /var/www/onidesk/beaver-framework/plugins/        | grep skeleton
+    ls -la /var/www/onidesk/beaver-framework/public/plugins/ | grep skeleton
+
+    Esperado:
+
+      beaver-skeleton -> /var/www/onidesk/beaver-skeleton
+      beaver-skeleton -> /var/www/onidesk/beaver-skeleton/resources/ui
+
+  5.6  Helpers carregados
+  -----------------------
+
+    php -r '
+      require "vendor/autoload.php";
+      var_dump(
+        function_exists("beaverSkeleton"),
+        function_exists("beaverSkeletonAsset"),
+        function_exists("beaverSkeletonPath"),
+        function_exists("beaverSkeletonVersion")
+      );
+    '
+
+    Esperado: quatro "bool(true)".
+
+========================================================================
+  6. ARRANCAR O SERVIDOR DE DESENVOLVIMENTO
+========================================================================
+
+    cd /var/www/onidesk/beaver-framework
+    php -S localhost:9000 -t public public/index.php
+
+  IMPORTANTE
+  ----------
+  O 3.º argumento (public/index.php) é obrigatório. Sem ele o servidor
+  embutido do PHP tenta servir /plugins/beaver-skeleton/css/... como ficheiro
+  estático e devolve 404 antes de chegar ao router do Beaver.
+
+  Deixa o terminal aberto. O servidor morre com Ctrl+C ou quando fechas.
+
+  Em background:
+
+    nohup php -S localhost:9000 -t public public/index.php \
+          > /tmp/beaver-server.log 2>&1 &
+    echo $! > /tmp/beaver-server.pid
+
+    Ver logs: tail -f /tmp/beaver-server.log
+    Parar:    kill "$(cat /tmp/beaver-server.pid)"
+              ou pkill -f "php -S localhost:9000"
+
+  Porta alternativa:
+
+    php -S localhost:9001 -t public public/index.php
+
+========================================================================
+  7. TESTAR O PLUGIN
+========================================================================
+
+  7.1  Página principal
+  ---------------------
+
+    curl -s http://localhost:9000/skeleton | head -30
+
+    Browser: http://localhost:9000/skeleton
+
+  7.2  Assets
+  -----------
+
+    curl -s http://localhost:9000/plugins/beaver-skeleton/css/beaver-skeleton.css | head
+    curl -s http://localhost:9000/plugins/beaver-skeleton/js/beaver-skeleton.js
+
+    CSS -> começa por ":root{ --amber-1:#FFD79A; ... }"
+    JS  -> "(() => { 'use strict'; console.log('[beaver-skeleton] carregado'); })();"
+
+  7.3  Verificar tamanho do CSS (deteta ficheiros truncados)
+  ----------------------------------------------------------
+
+    wc -c resources/ui/css/beaver-skeleton.css
+
+    Esperado: >= 3000 bytes (o ficheiro completo tem ~4 KB).
+    Se der 115 bytes, é só o :root — o CSS completo não foi aplicado.
+
+========================================================================
+  8. CORRER OS TESTES UNITÁRIOS
+========================================================================
+
+  8.1  Instalar dependências de desenvolvimento
+  ----------------------------------------------
+
+    cd /var/www/onidesk/beaver-skeleton
+    composer install
+    # ou, se o lock estiver desatualizado:
+    composer update
+
+  8.2  Correr a suite
+  -------------------
+
+    vendor/bin/phpunit
+
+    Esperado:
+
+      PHPUnit 10.x
+      ....                                        7 / 7 (100%)
+      OK (7 tests, N assertions)
+
+  8.3  Guardar o output
+  ---------------------
+
+    mkdir -p reports
+    vendor/bin/phpunit 2>&1 | tee "reports/test-$(date +%Y%m%d-%H%M%S).txt"
+
+  8.4  Relatório JUnit (para CI)
+  ------------------------------
+
+    vendor/bin/phpunit --log-junit reports/junit.xml
+
+  8.5  Cobertura de código (requer xdebug ou pcov)
+  ------------------------------------------------
+
+    php -m | grep -iE "xdebug|pcov"
+
+    Se disponível:
+
+    vendor/bin/phpunit --coverage-html reports/coverage-html
+    xdg-open reports/coverage-html/index.html
+
+  8.6  Nota sobre o stub da PluginBase
+  ------------------------------------
+
+    A classe SkeletonPlugin extends PluginBase, que vive no Beaver
+    Framework. Fora do framework, os testes usam um stub em:
+
+      tests/Stubs/PluginBase.php
+
+    Registado via "classmap" no autoload-dev do composer.json.
+    Quando o Beaver real está carregado, o stub é ignorado.
+
+========================================================================
+  9. ATUALIZAR O PLUGIN
+========================================================================
+
+    cd /var/www/onidesk/beaver-skeleton
+    git pull                     # se clonaste via git
+    composer install
+    composer dump-autoload -o
+    rm -rf .phpunit.cache reports
+
+  Reiniciar o servidor se estiver em primeiro plano.
+
+========================================================================
+  10. REMOVER O PLUGIN
+========================================================================
+
+    FRAMEWORK=/var/www/onidesk/beaver-framework
+    PLUGIN=/var/www/onidesk/beaver-skeleton
+
+    sudo rm -f "$FRAMEWORK/plugins/beaver-skeleton"
+    sudo rm -f "$FRAMEWORK/public/plugins/beaver-skeleton"
+
+    # opcional: apagar a pasta do plugin
+    sudo rm -rf "$PLUGIN"
+
+  O rm -f sobre um symlink apaga o LINK, não a pasta de destino.
+
+  Confirmar:
+
+    ls -la "$FRAMEWORK/plugins/"        | grep skeleton   # vazio
+    ls -la "$FRAMEWORK/public/plugins/" | grep skeleton   # vazio
+
+========================================================================
+  11. RENOMEAR PARA OUTRO PLUGIN
+========================================================================
+
+    cd /var/www/onidesk
+    cp -r beaver-skeleton beaver-foo
+    cd beaver-foo
+
+    grep -rl "Skeleton" . --exclude-dir=vendor | xargs sed -i 's/Skeleton/Foo/g'
+    grep -rl "skeleton" . --exclude-dir=vendor | xargs sed -i 's/skeleton/foo/g'
+
+    mv src/SkeletonPlugin.php src/FooPlugin.php
+    sed -i 's|onidesk/beaver-skeleton|onidesk/beaver-foo|' composer.json
+
+    composer dump-autoload -o
+
+    FRAMEWORK=/var/www/onidesk/beaver-framework
+    sudo ln -sfn /var/www/onidesk/beaver-foo              "$FRAMEWORK/plugins/beaver-foo"
+    sudo ln -sfn /var/www/onidesk/beaver-foo/resources/ui "$FRAMEWORK/public/plugins/beaver-foo"
+    sudo chown -h franco:franco \
+      "$FRAMEWORK/plugins/beaver-foo" \
+      "$FRAMEWORK/public/plugins/beaver-foo"
+
+========================================================================
+  12. ESTRUTURA DE FICHEIROS
+========================================================================
+
+  beaver-skeleton/
+  |-- plugin.json                        # manifest
+  |-- composer.json                      # autoload PSR-4 + type: beaver-plugin
+  |-- phpunit.xml                        # config PHPUnit
+  |-- README.txt                         # visão geral
+  |-- INSTALL.txt                        # este manual
+  |-- HELP.txt                           # guia de desenvolvimento
+  |-- CHANGELOG.txt                      # histórico
+  |-- LICENSE.txt                        # MIT
+  |-- .gitignore
+  |-- .gitattributes
+  |-- .editorconfig
+  |-- .env.example                       # modelo de variáveis de ambiente
+  |-- .env.testing                       # variáveis para testes
+  |-- config/
+  |   `-- config.php                     # config central (lê de $_ENV)
+  |-- routes/
+  |   `-- web.php                        # rotas do plugin
+  |-- src/
+  |   |-- SkeletonPlugin.php             # classe principal
+  |   `-- Support/
+  |       `-- helpers.php                # funções beaverXxx()
+  |-- resources/
+  |   |-- views/
+  |   |   `-- index.php                  # view de exemplo
+  |   `-- ui/
+  |       |-- css/beaver-skeleton.css
+  |       `-- js/beaver-skeleton.js
+  `-- tests/
+      |-- PluginTest.php                 # testes do plugin
+      |-- HelpersTest.php                # testes dos helpers
+      `-- Stubs/
+          `-- PluginBase.php             # stub para testes
+
+========================================================================
+  13. RESOLUÇÃO DE PROBLEMAS
+========================================================================
+
+  ERR_CONNECTION_REFUSED no browser
+  ---------------------------------
+    Servidor não está a correr.
+
+    ss -tlnp | grep 9000
+    ps aux | grep "php -S" | grep -v grep
+
+    Se nada aparecer, arranca (secção 6).
+
+  Failed to listen on localhost:9000 (Address already in use)
+  -----------------------------------------------------------
+    Porta ocupada.
+
+    sudo lsof -i :9000
+    sudo kill -9 <PID>
+
+    Ou usa outra porta: php -S localhost:9001 ...
+
+  404 Not Found em /skeleton
+  --------------------------
+    O kernel não descobriu o plugin.
+
+    cat plugin.json
+    ls -la /var/www/onidesk/beaver-framework/plugins/beaver-skeleton
+
+    O symlink tem de apontar para a pasta COMPLETA, não para resources/ui.
+
+  404 Not Found no CSS/JS
+  -----------------------
+    1) Servidor arrancado SEM router script -- causa mais comum.
+       Mata (Ctrl+C) e arranca com public/index.php como 3.º argumento.
+
+    2) URLs errados. O URL usa o NOME DA PASTA, não o slug:
+
+       errado: /plugins/skeleton/css/...
+       certo:  /plugins/beaver-skeleton/css/...
+
+       Confirma em routes/web.php e resources/views/index.php:
+
+       grep -rn "/plugins/" routes/web.php resources/views/index.php
+
+    3) Ficheiro não existe:
+
+       ls -la resources/ui/css/
+       ls -la resources/ui/js/
+
+  500 Internal Server Error
+  -------------------------
+    Vê o stack trace no terminal do php -S. Causas:
+      - Namespace errado em src/SkeletonPlugin.php
+      - Falta "use Beaver\Plugin\PluginBase;"
+      - Erro de sintaxe
+
+    php -l src/SkeletonPlugin.php
+    php -l routes/web.php
+
+  Class "Beaver\Plugin\PluginBase" not found (nos testes)
+  -------------------------------------------------------
+    Cria o stub em tests/Stubs/PluginBase.php e regista via classmap:
+
+      "autoload-dev": {
+          "psr-4": { "Beaver\\Plugins\\Skeleton\\Tests\\": "tests/" },
+          "classmap": [ "tests/Stubs/" ]
+      }
+
+    composer dump-autoload
+    vendor/bin/phpunit
+
+  Class "Beaver\Plugins\Skeleton\SkeletonPlugin" not found
+  --------------------------------------------------------
+    composer dump-autoload -o
+
+    Confirma o autoload no composer.json:
+
+      "autoload": {
+          "psr-4": { "Beaver\\Plugins\\Skeleton\\": "src/" },
+          "files":  [ "src/Support/helpers.php" ]
+      }
+
+  Could not open input file: vendor/bin/phpunit
+  ---------------------------------------------
+    PHPUnit não instalado. Corre:
+
+      composer require --dev phpunit/phpunit
+      composer update
+
+  Composer could not detect the root package version
+  --------------------------------------------------
+    Aviso inofensivo. Para remover, adiciona "version" ao composer.json:
+
+      "version": "0.1.0"
+
+  Permission denied ao criar symlink
+  ----------------------------------
+    sudo ln -sfn ...
+
+  Permission denied ao correr sed -i
+  -----------------------------------
+    O ficheiro não é teu. Usa sudo ou corrige o dono:
+
+      sudo chown franco:franco <ficheiro>
+
+  Ficheiros com __NAME__ ou __STUDLY__
+  ------------------------------------
+    grep -rln "__NAME__\|__STUDLY__" . --exclude-dir=vendor
+
+    grep -rl "__NAME__" . --exclude-dir=vendor | xargs sed -i 's/__NAME__/beaver-skeleton/g'
+    grep -rl "__STUDLY__" . --exclude-dir=vendor | xargs sed -i 's/__STUDLY__/Skeleton/g'
+
+  xdg-open: file 'reports/coverage-html/index.html' does not exist
+  ----------------------------------------------------------------
+    Cobertura não foi gerada. Requer xdebug ou pcov:
+
+      php -m | grep -iE "xdebug|pcov"
+      sudo apt install php8.3-pcov
+      sudo phpenmod pcov
+
+      vendor/bin/phpunit --coverage-html reports/coverage-html
+
+  Ver logs em tempo real
+  ----------------------
+    tail -f /tmp/beaver-server.log
+
+========================================================================
+  14. CHECKLIST FINAL
+========================================================================
+
+  [ ] PHP >= 8.1 e Composer >= 2.0
+  [ ] Pasta /var/www/onidesk/beaver-skeleton/ criada
+  [ ] composer install sem erros
+  [ ] Symlink plugins/beaver-skeleton -> pasta do plugin
+  [ ] Symlink public/plugins/beaver-skeleton -> resources/ui
+  [ ] Dono dos symlinks é franco:franco
+  [ ] plugin.json é JSON válido
+  [ ] .env criado a partir de .env.example
+  [ ] php -l sem erros em src/SkeletonPlugin.php e routes/web.php
+  [ ] grep __NAME__ dá vazio
+  [ ] grep "/plugins/skeleton" dá vazio (só /plugins/beaver-skeleton)
+  [ ] Helpers beaverSkeleton* disponíveis
+  [ ] Servidor arrancado com php -S ... public/index.php
+  [ ] curl /skeleton devolve HTML
+  [ ] curl /plugins/beaver-skeleton/css/beaver-skeleton.css devolve CSS (~4 KB)
+  [ ] vendor/bin/phpunit passa (7/7)
+  [ ] Página abre no browser com tema âmbar
+  [ ] Página formatada (CSS completo, não só :root)
+
+========================================================================
+  REFERÊNCIAS
+========================================================================
+
+  README.txt     -> visão geral
+  HELP.txt       -> guia de desenvolvimento
+  CHANGELOG.txt  -> histórico
+  Repo           -> https://github.com/Onidesk-TI/beaver-console
+
+========================================================================
+  Beaver Skeleton - MIT (c) Onidesk
+========================================================================

@@ -1,0 +1,144 @@
+========================================================================
+  HELP -- Beaver Skeleton
+  Guia de desenvolvimento do plugin
+========================================================================
+
+  ÍNDICE
+  ------
+   1. Ciclo de vida
+   2. Métodos do PluginBase
+   3. Adicionar rotas
+   4. Devolver JSON
+   5. Adicionar assets
+   6. Registar comandos CLI
+   7. Consumir outros plugins
+   8. Configuração
+   9. Servidor de desenvolvimento
+  10. Debug
+  11. Checklist para publicar
+
+========================================================================
+  1. CICLO DE VIDA
+========================================================================
+
+  O kernel do Beaver descobre o plugin pelo plugin.json, lê o "namespace"
+  e o "main", e instancia a classe definida em "main".
+
+    final class SkeletonPlugin extends PluginBase
+    {
+        public function boot(): void
+        {
+            $this->loadRoutes();
+            $this->loadViews();
+            $this->loadTranslations();
+        }
+    }
+
+========================================================================
+  2. MÉTODOS DO PluginBase
+========================================================================
+
+  loadRoutes()            carrega routes/web.php
+  loadViews()             registra resources/views/
+  loadTranslations()      registra resources/lang/
+  $this->path             caminho absoluto da pasta do plugin
+
+========================================================================
+  3. ADICIONAR ROTAS
+========================================================================
+
+    use Beaver\Http\Response;
+
+    $router->get('/meu-plugin', function () use ($plugin) {
+        $view = $plugin->path . '/resources/views/index.php';
+        ob_start();
+        require $view;
+        return Response::html(ob_get_clean());
+    });
+
+========================================================================
+  4. DEVOLVER JSON
+========================================================================
+
+    $router->get('/api/meu-plugin/ping', function () {
+        return Response::json(['ok' => true, 'time' => time()]);
+    });
+
+========================================================================
+  5. ADICIONAR ASSETS
+========================================================================
+
+  Padrão pronto:
+
+    /plugins/beaver-skeleton/css/<file>  ->  resources/ui/css/<file>
+    /plugins/beaver-skeleton/js/<file>   ->  resources/ui/js/<file>
+
+  No HTML:
+
+    <link rel="stylesheet" href="/plugins/beaver-skeleton/css/beaver-skeleton.css">
+    <script src="/plugins/beaver-skeleton/js/beaver-skeleton.js"></script>
+
+========================================================================
+  6. REGISTAR COMANDOS CLI
+========================================================================
+
+    use Beaver\Plugins\Console\Registry;
+
+    Registry::register(
+        'beaver:skeleton:hello',
+        function (array $args) {
+            return ['ok' => true, 'message' => 'Olá do Skeleton'];
+        },
+        [
+            'description' => 'Exemplo de comando',
+            'usage'       => 'beaver:skeleton:hello',
+            'plugin'      => 'skeleton',
+        ]
+    );
+
+========================================================================
+  7. CONSUMIR OUTROS PLUGINS
+========================================================================
+
+    if (class_exists(\Beaver\Plugins\Console\Registry::class)) {
+        // usa o Console
+    }
+
+========================================================================
+  8. CONFIGURAÇÃO
+========================================================================
+
+    $config = require $plugin->path . '/config/config.php';
+
+========================================================================
+  9. SERVIDOR DE DESENVOLVIMENTO
+========================================================================
+
+    cd /var/www/onidesk/beaver-framework
+    php -S localhost:9000 -t public public/index.php
+
+  O public/index.php como 3.º argumento é OBRIGATÓRIO.
+
+========================================================================
+  10. DEBUG
+========================================================================
+
+  - /meu-plugin dá 404 -> kernel não descobriu o plugin
+  - CSS/JS dão 404     -> servidor sem router script
+  - 500                -> ver stack trace no terminal do php -S
+
+========================================================================
+  11. CHECKLIST PARA PUBLICAR
+========================================================================
+
+  [ ] composer.json com name e type: beaver-plugin
+  [ ] plugin.json válido
+  [ ] README.txt, INSTALL.txt, HELP.txt
+  [ ] LICENSE.txt
+  [ ] .gitignore a ignorar vendor/
+  [ ] Testes a passar (vendor/bin/phpunit)
+  [ ] Versão atualizada em plugin.json
+
+========================================================================
+  MIT (c) Onidesk
+========================================================================

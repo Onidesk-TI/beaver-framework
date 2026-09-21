@@ -1,0 +1,77 @@
+# ============================================================
+#  Beaver Skeleton — .gitattributes
+# ============================================================
+
+# ---- Normalização de line endings -------------------------
+# Por omissão, o Git converte para LF no repositório.
+* text=auto eol=lf
+
+# ---- Ficheiros sempre LF ----------------------------------
+*.php   text eol=lf
+*.phtml text eol=lf
+*.txt   text eol=lf
+*.md    text eol=lf
+*.json  text eol=lf
+*.xml   text eol=lf
+*.yml   text eol=lf
+*.yaml  text eol=lf
+*.css   text eol=lf
+*.js    text eol=lf
+*.ts    text eol=lf
+*.html  text eol=lf
+*.env*  text eol=lf
+.gitignore        text eol=lf
+.gitattributes    text eol=lf
+.editorconfig     text eol=lf
+
+# ---- Ficheiros sempre CRLF (Windows) ----------------------
+*.bat   text eol=crlf
+*.cmd   text eol=crlf
+*.ps1   text eol=crlf
+
+# ---- Binários (nunca converter) ---------------------------
+*.png   binary
+*.jpg   binary
+*.jpeg  binary
+*.gif   binary
+*.ico   binary
+*.webp  binary
+*.svg   text eol=lf
+*.woff  binary
+*.woff2 binary
+*.ttf   binary
+*.eot   binary
+*.otf   binary
+
+*.zip   binary
+*.tar   binary
+*.gz    binary
+*.7z    binary
+*.pdf   binary
+*.phar  binary
+
+# ---- Linguagens (marcação para estatísticas) --------------
+*.php   linguist-language=PHP
+*.css   linguist-language=CSS
+*.js    linguist-language=JavaScript
+
+# ---- Diff para ficheiros gerados --------------------------
+composer.lock     -diff
+package-lock.json -diff
+yarn.lock         -diff
+pnpm-lock.yaml    -diff
+*.min.js          -diff
+*.min.css         -diff
+
+# ---- Excluir do release (git archive) ---------------------
+/.gitattributes        export-ignore
+/.gitignore            export-ignore
+/.editorconfig         export-ignore
+/.env.example          export-ignore
+/.env.testing          export-ignore
+/phpunit.xml           export-ignore
+/tests/                export-ignore
+/.github/              export-ignore
+/CHANGELOG.txt         export-ignore
+/HELP.txt              export-ignore
+/INSTALL.txt           export-ignore
