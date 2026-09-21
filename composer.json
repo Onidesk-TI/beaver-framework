@@ -26,11 +26,10 @@
             "Beaver\\Plugins\\Frankei\\": "plugins/frankei/src/",
             "Beaver\\Plugins\\Library\\": "plugins/library/src/",
             "Beaver\\Plugins\\Nav\\": "plugins/beaver-nav/src/",
+            "Beaver\\Plugins\\Skeleton\\": "plugins/beaver-skeleton/src/",
             "Beaver\\Plugins\\SqlWizard\\": "plugins/sqlwizard/src/",
             "Beaver\\Plugins\\Tips\\": "plugins/tips/src/",
-            "Beaver\\Plugins\\UpdateManager\\": "plugins/update-manager/src/",
-            "Beaver\\Plugins\\HelloBeaver\\": "plugins/hello-beaver/src/",
-            "Beaver\\Plugins\\MeuPlugin\\": "plugins/meu-plugin/src/"
+            "Beaver\\Plugins\\UpdateManager\\": "plugins/update-manager/src/"
         },
         "files": [
             "src/View/helpers.php"

@@ -18,5 +18,6 @@ class SkeletonPlugin extends PluginBase
         $this->loadRoutes();
         $this->loadViews();
         $this->loadTranslations();
+        $this->loadMigrations();
     }
 }

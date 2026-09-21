@@ -56,3 +56,26 @@ $router->get('/plugins/beaver-skeleton/css/{file}', function ($req, $file) use (
 $router->get('/plugins/beaver-skeleton/js/{file}', function ($req, $file) use ($plugin) {
     return skeleton_serve_asset($plugin, 'js', (string) $file);
 });
+
+// ------------------------------------------------------------------
+// Exemplo de BD — CRUD de Notes
+// ------------------------------------------------------------------
+
+$router->get('/skeleton/notes', function () {
+    return \Beaver\Http\Response::json(
+        (new \Beaver\Plugins\Skeleton\Services\NoteService())->all()
+    );
+});
+
+$router->post('/skeleton/notes', function (\Beaver\Http\Request $req) {
+    $note = (new \Beaver\Plugins\Skeleton\Services\NoteService())->create(
+        (string) $req->input('title', 'sem título'),
+        (string) $req->input('body', ''),
+    );
+    return \Beaver\Http\Response::json(['id' => $note->id], 201);
+});
+
+$router->delete('/skeleton/notes/{id}', function (int $id) {
+    $ok = (new \Beaver\Plugins\Skeleton\Services\NoteService())->delete($id);
+    return \Beaver\Http\Response::json(['deleted' => $ok]);
+});
