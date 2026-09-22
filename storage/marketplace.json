@@ -1,0 +1,23 @@
+{
+    "version": 1,
+    "updated_at": "2026-09-22",
+    "curated_by": "franco",
+    "repos": [
+        {
+            "slug": "beaver-admin",
+            "name": "Beaver Admin",
+            "description": "Dashboard de administração com autenticação e notas.",
+            "url": "https://github.com/Onidesk-TI/beaver-admin",
+            "category": "admin",
+            "icon": "⚙️"
+        },
+        {
+            "slug": "beaver-skeleton",
+            "name": "Beaver Skeleton",
+            "description": "Esqueleto oficial para novos plugins.",
+            "url": "https://github.com/Onidesk-TI/beaver-skeleton",
+            "category": "devtools",
+            "icon": "🦴"
+        }
+    ]
+}

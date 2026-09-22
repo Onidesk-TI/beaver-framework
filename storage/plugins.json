@@ -1,0 +1,23 @@
+{
+    "version": 1,
+    "enabled": [
+        "console",
+        "beaver-nav",
+        "frankei",
+        "library",
+        "sqlwizard",
+        "tips",
+        "update-manager",
+        "beaver-skeleton",
+        "beaver-admin",
+        "paginator"
+    ],
+    "disabled": [],
+    "installed": {
+        "beaver-admin": {
+            "source": "local",
+            "version": "0.1.0",
+            "installed_at": 1727200000
+        }
+    }
+}

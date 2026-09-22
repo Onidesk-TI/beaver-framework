@@ -1,0 +1,15 @@
+{
+    "name": "Beaver Installer",
+    "slug": "beaver-installer",
+    "version": "0.1.0",
+    "author": "Onidesk",
+    "description": "Gestor de plugins — listar, instalar, ativar, desativar e remover",
+    "namespace": "Beaver\\Plugins\\BeaverInstaller",
+    "main": "src/InstallerPlugin.php",
+    "beaver_version": ">=0.1.0",
+    "api_version": "1.0.0",
+    "requires": {"php": ">=8.1", "extensions": ["json"]},
+    "permissions": ["db.read","hooks.listen","hooks.emit","views.register","routes.register","admin.menu"],
+    "admin_menu": {"label": "Plugins", "icon": "fa-plug", "order": 5},
+    "routes": "routes/web.php"
+}

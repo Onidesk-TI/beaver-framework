@@ -55,4 +55,24 @@ class MigrateCommand extends Command
 
         return self::SUCCESS;
     }
+
+    // ---------- plugin paths (SDK) ----------
+
+    /** @var array<string,string> */
+    private static array $pluginPaths = [];
+
+    /**
+     * Registra uma pasta de migrations de um plugin.
+     * Chamado por PluginBase::loadMigrations().
+     */
+    public static function addPluginPath(string $slug, string $path): void
+    {
+        self::$pluginPaths[$slug] = rtrim($path, '/');
+    }
+
+    /** @return array<string,string> */
+    public static function pluginPaths(): array
+    {
+        return self::$pluginPaths;
+    }
 }

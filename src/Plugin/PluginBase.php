@@ -122,10 +122,24 @@ abstract class PluginBase
         \Beaver\I18n\Translator::addNamespace($this->slug(), $path);
     }
 
-    /** Migrações (Bloco 4) */
+    /**
+     * Registra as migrations do plugin no MigrateCommand.
+     *
+     * As migrations vivem em `<plugin>/database/migrations/*.php` e
+     * são executadas por `php beaver migrate`.
+     */
     public function loadMigrations(?string $path = null): void
     {
-        // TODO Bloco 4
+        $path ??= $this->path . '/database/migrations';
+
+        if (!is_dir($path)) {
+            return;
+        }
+
+        \Beaver\Console\Commands\MigrateCommand::addPluginPath(
+            $this->slug(),
+            $path
+        );
     }
 
     /** Config do plugin */

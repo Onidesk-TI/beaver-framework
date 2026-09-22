@@ -24,6 +24,7 @@ class PluginManager
     private bool $discovered = false;
     private bool $booted = false;
     private ?PermissionAuditor $auditor = null;
+    private ?array $stateCache = null;
 
     public function __construct(private Application $app)
     {
@@ -105,6 +106,12 @@ class PluginManager
         $this->booted = true;
 
         foreach ($this->plugins as $slug => $data) {
+            // Respeitar o estado enabled/disabled (storage/plugins.json)
+            if (!$this->isPluginEnabled($slug, $data['source'] ?? '')) {
+                error_log("[PluginManager] Plugin '$slug' desativado — skip");
+                continue;
+            }
+
             try {
                 $instance = $this->instantiate($data);
                 $this->plugins[$slug]['instance'] = $instance;
@@ -271,5 +278,46 @@ class PluginManager
         }
 
         return array_values(array_unique($flat));
+    }
+
+    // ---------- state (storage/plugins.json) ----------
+
+    /**
+     * Verifica se um plugin pode arrancar.
+     * Regras:
+     *   - Nativos (internal/dev): enabled por omissão, exceto se em `disabled`
+     *   - Externos: só arrancam se listados em `enabled`
+     */
+    private function isPluginEnabled(string $slug, string $source): bool
+    {
+        $state = $this->loadState();
+
+        $inEnabled  = in_array($slug, $state['enabled']  ?? [], true);
+        $inDisabled = in_array($slug, $state['disabled'] ?? [], true);
+
+        // Externos: só se em enabled
+        if (!in_array($source, ['internal', 'dev'], true)) {
+            return $inEnabled && !$inDisabled;
+        }
+
+        // Nativos: ligados por omissão, exceto se explicitamente disabled
+        return !$inDisabled;
+    }
+
+    private function loadState(): array
+    {
+        if ($this->stateCache !== null) {
+            return $this->stateCache;
+        }
+
+        $file = dirname(__DIR__, 2) . '/storage/plugins.json';
+        if (!is_file($file)) {
+            return $this->stateCache = ['enabled' => [], 'disabled' => [], 'installed' => []];
+        }
+
+        $data = json_decode((string) file_get_contents($file), true);
+        return $this->stateCache = is_array($data)
+            ? $data
+            : ['enabled' => [], 'disabled' => [], 'installed' => []];
     }
 }

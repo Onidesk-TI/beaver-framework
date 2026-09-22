@@ -18,6 +18,16 @@ $navMenus = [
         ['label' => 'GitHub',       'href' => 'https://github.com/Onidesk-TI/beaver-framework', 'icon' => '🐙', 'external' => true],
     ],
 
+        // Menu do catálogo de plugins / docs
+    'sdk' => [
+        ['label' => 'Home',    'href' => '/',              'icon' => '🏠'],
+        ['label' => 'Plugins', 'href' => '/plugins',       'icon' => '🔌'],
+        ['label' => 'Docs',    'href' => '/documentation', 'icon' => '📚'],
+
+        ['label' => 'GitHub',  'href' => 'https://github.com/Onidesk-TI/beaver-framework', 'icon' => '🐙', 'external' => true],
+    ],
+
+
     // Menu do catálogo de plugins / docs
     'catalog' => [
         ['label' => 'Home',    'href' => '/',              'icon' => '🏠'],

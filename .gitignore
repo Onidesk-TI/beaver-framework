@@ -114,3 +114,7 @@ php-server.log
 
 # Audit log de permissões (runtime)
 /storage/logs/plugin-audit.log
+
+# Installer (infraestrutura, sempre presente)
+!/plugins/beaver-installer/
+!/plugins/beaver-installer/**

@@ -51,7 +51,12 @@
 </svg>
 
  <!-- //////////////////// render header ////////////////// -->
-<?php require __DIR__ . '/partials/header.php'; ?>
+<?php
+$navContext = 'default';
+$navExtra   = [['label' => 'SDK', 'href' => '/sdk', 'icon' => '🧩']];
+require __DIR__ . '/partials/header.php';
+
+?>
  <!-- //////////////////// render header //////////////////-->
 <main>
   <section class="card">

@@ -56,7 +56,6 @@ if (!function_exists('beaver_core_serve_asset')) {
     }
 }
 
-
 // ── Documentação ──
 $router->get('/documentation', function () {
     return beaver_marketplace_view('documentation', [
@@ -76,6 +75,18 @@ $router->get('/resources/ui/js/{file}', function ($req, $file) {
 });
 
 // ── Landing do Beaver ──
+// ── Beaver SDK ──
+$router->get('/sdk', function () {
+    $view = dirname(__DIR__) . '/app/views/sdk.php';
+
+    if (!is_file($view)) {
+        return Response::text('View não encontrada: ' . $view, 404);
+    }
+
+    ob_start();
+    require $view;
+    return Response::html(ob_get_clean());
+});
 $router->get('/', function () {
     $view = dirname(__DIR__) . '/app/views/index.php';
 
@@ -113,8 +124,6 @@ $router->get('/_plugins', function () {
     ]);
 });
 
-
-
 // ── Assets: css ──
 $router->get('/resources/ui/css/{file}', function ($req, $file) {
     return beaver_core_serve_asset('css', (string) $file);
@@ -125,8 +134,44 @@ $router->get('/resources/ui/js/{file}', function ($req, $file) {
     return beaver_core_serve_asset('js', (string) $file);
 });
 
+// ── Screenshots de plugins ──
+$router->get('/plugins/{slug}/screenshot/{file}', function ($req, $slug, $file) {
+    $slug = (string) $slug;
+    $file = (string) $file;
 
+    if (!preg_match('/^[a-z0-9_-]+$/i', $slug) ||
+        !preg_match('/^[A-Za-z0-9_.-]+$/', $file)) {
+        return Response::text('Forbidden', 403);
+    }
 
+    $base = dirname(__DIR__);
+    $candidates = [
+        "$base/plugins/$slug/resources/screenshots/$file",
+        "$base/app/plugins/$slug/resources/screenshots/$file",
+    ];
+
+    foreach ($candidates as $path) {
+        if (!is_file($path)) {
+            continue;
+        }
+
+        $ext  = strtolower(pathinfo($path, PATHINFO_EXTENSION));
+        $mime = match ($ext) {
+            'png'         => 'image/png',
+            'jpg', 'jpeg' => 'image/jpeg',
+            'webp'        => 'image/webp',
+            'gif'         => 'image/gif',
+            'svg'         => 'image/svg+xml',
+            default       => 'application/octet-stream',
+        };
+
+        return Response::html((string) file_get_contents($path), 200)
+            ->withHeader('Content-Type', $mime)
+            ->withHeader('Cache-Control', 'public, max-age=86400');
+    }
+
+    return Response::text('Screenshot not found', 404);
+});
 // ── Plugins ──
 $router->get('/plugins', function () {
     $view = dirname(__DIR__) . '/app/views/plugins.php';
@@ -154,8 +199,29 @@ $router->get('/plugins', function () {
             'downloads'   => 12840,
             'updated'     => 'há 3 dias',
             'updated_ts'  => 1726900000,
-            'screenshot'  => null,
+            'screenshot'  => '/plugins/console/screenshots/cover.png',
             'usage'       => "php beaver console\n> routes:list\n> make:controller ProductController",
+        ],
+        [
+            'name'           => 'Beaver Skeleton',
+            'slug'           => 'beaver-skeleton',
+            'icon'           => '🦴',
+            'hue'            => 30,
+            'official'       => true,
+            'version'        => '0.1.0',
+            'author'         => 'Onidesk',
+            'category'       => 'devtools',
+            'category_label' => 'Ferramentas dev',
+            'tags'           => ['official', 'stable', 'new'],
+            'repo'           => 'https://github.com/Onidesk-TI/beaver-skeleton',
+            'composer'       => 'onidesk-ti/beaver-skeleton',
+            'description'    => 'Esqueleto oficial para criar plugins.',
+            'stars'          => 0,
+            'downloads'      => 0,
+            'updated'        => 'agora',
+            'updated_ts'     => 1730000000,
+            'screenshot'     => '/plugins/beaver-skeleton/screenshots/cover.png',
+            'usage'          => "composer create-project onidesk/beaver-skeleton",
         ],
         [
             'name'        => 'Frankey',
@@ -262,22 +328,22 @@ $router->get('/plugins', function () {
         [
             'name'        => 'Beaver Admin',
             'slug'        => 'beaver-admin',
-            'icon'        => '🎛️',
-            'hue'         => 320,
-            'version'     => '0.5.0-beta',
+            'icon'        => '⚙️',
+            'hue'         => 30,
+            'version'     => '0.1.0',
             'author'      => 'Onidesk',
             'category'    => 'admin',
             'category_label' => 'Admin & UI',
-            'tags'        => ['official', 'beta', 'new'],
+            'tags'        => ['official', 'stable', 'new'],
             'repo'        => 'https://github.com/Onidesk-TI/beaver-admin',
             'composer'    => 'onidesk-ti/beaver-admin',
-            'description' => 'Painel administrativo auto-gerado a partir de models e policies. CRUD, filtros e exportação.',
-            'stars'       => 67,
-            'downloads'   => 980,
-            'updated'     => 'hoje',
-            'updated_ts'  => 1727200000,
-            'screenshot'  => null,
-            'usage'       => "// routes/admin.php\nAdmin::resource('products');\nAdmin::resource('orders')->readonly();",
+            'description' => 'Dashboard de administração com autenticação, notas e gestão do sistema.',
+            'stars'       => 0,
+            'downloads'   => 0,
+            'updated'     => 'agora',
+            'updated_ts'  => 1730000000,
+            'screenshot'  => '/plugins/beaver-admin/screenshots/cover.png',
+            'usage'       => "GET /admin (protegido)\nPOST /login\nPOST /register",
         ],
         [
             'name'        => 'Beaver Logs',
@@ -334,7 +400,7 @@ if (!function_exists('beaver_marketplace_products')) {
         'downloads'   => 12840,
         'updated'     => 'há 3 dias',
         'updated_ts'  => 1726900000,
-        'screenshot'  => null,
+        'screenshot'  => '/plugins/console/screenshots/cover.png',
         'usage'       => "php beaver console\n> routes:list\n> make:controller ProductController",
         'price'       => 0,
         'is_free'     => true,
@@ -478,22 +544,22 @@ if (!function_exists('beaver_marketplace_products')) {
         [
         'name'        => 'Beaver Admin',
         'slug'        => 'beaver-admin',
-        'icon'        => '🎛️',
-        'hue'         => 320,
-        'version'     => '0.5.0-beta',
+        'icon'        => '⚙️',
+        'hue'         => 30,
+        'version'     => '0.1.0',
         'author'      => 'Onidesk',
         'category'    => 'admin',
         'category_label' => 'Admin & UI',
-        'tags'        => ['official', 'beta', 'new'],
+        'tags'        => ['official', 'stable', 'new'],
         'repo'        => 'https://github.com/Onidesk-TI/beaver-admin',
         'composer'    => 'onidesk-ti/beaver-admin',
-        'description' => 'Painel administrativo auto-gerado a partir de models e policies. CRUD, filtros e exportação.',
-        'stars'       => 67,
-        'downloads'   => 980,
-        'updated'     => 'hoje',
-        'updated_ts'  => 1727200000,
-        'screenshot'  => null,
-        'usage'       => "// routes/admin.php\nAdmin::resource('products');\nAdmin::resource('orders')->readonly();",
+        'description' => 'Dashboard de administração com autenticação, notas e gestão do sistema.',
+        'stars'       => 0,
+        'downloads'   => 0,
+        'updated'     => 'agora',
+        'updated_ts'  => 1730000000,
+        'screenshot'  => '/plugins/beaver-admin/screenshots/cover.png',
+        'usage'       => "GET /admin (protegido)\nPOST /login\nPOST /register",
         'price'       => 49.00,
         'is_free'     => false,
         ],
@@ -542,7 +608,6 @@ $router->get('/marketplace', function () {
         ],
     ]);
 });
-
 
 // ── marketplace: ver tudo / destaques ──
 $router->get('/marketplace/all', function () {
@@ -597,8 +662,6 @@ $router->get('/marketplace/sellers', function () {
         'year'    => date('Y'),
     ]);
 });
-
-
 
 // ── marketplace: por categoria ──
 $router->get('/marketplace/{category}', function ($req, $category) {

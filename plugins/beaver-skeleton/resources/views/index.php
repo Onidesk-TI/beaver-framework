@@ -41,6 +41,12 @@
     </article>
 
     <article class="sk-card">
+      <span class="sk-icon">🗄️</span>
+      <h2>Database</h2>
+      <p>CRUD completo em <code>src/Models/</code> e <code>src/Services/</code>. Migrations em <code>database/migrations/</code>.</p>
+    </article>
+
+    <article class="sk-card">
       <span class="sk-icon">🎨</span>
       <h2>Assets</h2>
       <p>CSS em <code>resources/ui/css/</code>, JS em <code>resources/ui/js/</code>.</p>

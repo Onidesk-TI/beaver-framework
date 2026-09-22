@@ -29,7 +29,9 @@
             "Beaver\\Plugins\\Skeleton\\": "plugins/beaver-skeleton/src/",
             "Beaver\\Plugins\\SqlWizard\\": "plugins/sqlwizard/src/",
             "Beaver\\Plugins\\Tips\\": "plugins/tips/src/",
-            "Beaver\\Plugins\\UpdateManager\\": "plugins/update-manager/src/"
+            "Beaver\\Plugins\\UpdateManager\\": "plugins/update-manager/src/",
+            "Beaver\\Plugins\\BeaverAdmin\\": "plugins/beaver-admin/src/",
+            "Beaver\\Plugins\\BeaverInstaller\\": "plugins/beaver-installer/src/"
         },
         "files": [
             "src/View/helpers.php"
