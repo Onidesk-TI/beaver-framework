@@ -708,7 +708,7 @@ $pageItems = array_slice($COMPONENTS, $offset, $perPage);
 <!-- ============ HEADER ============ -->
 <?php
 $active  = 'documentation';
-$version = $version ?? \Beaver\Foundation\Application::VERSION;
+$version = $version ?? beaver_version();
 require __DIR__ . '/partials/header-docs.php';
 ?>
 

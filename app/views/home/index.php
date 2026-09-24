@@ -1,6 +1,6 @@
 <div class="beaver-card">
     <h1>🦫 Beaver Framework</h1>
-    <p>Bem-vindo! Versão <code><?= e(\Beaver\Foundation\Application::VERSION) ?></code>.</p>
+    <p>Bem-vindo! Versão <code><?= e(beaver_version()) ?></code>.</p>
 
     <h2>Estado atual</h2>
     <ul>

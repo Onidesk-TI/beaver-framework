@@ -11,7 +11,7 @@
  */
 
 $title   = 'Beaver SDK · Plugin API v1.0.0';
-$version = \Beaver\Foundation\Application::VERSION;
+$version = beaver_version();
 $year    = date('Y');
 ?>
 <!DOCTYPE html>
