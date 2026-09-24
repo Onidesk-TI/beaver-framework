@@ -22,8 +22,6 @@ use Beaver\View\View;
 
 class Application
 {
-    public const VERSION = '0.1.0';
-
     private static ?self $instance = null;
 
     private array $bindings = [];
@@ -34,46 +32,51 @@ class Application
 
     public function __construct(?string $basePath = null)
     {
-
         $this->basePath = $basePath ?? dirname(__DIR__, 2);
         self::$instance = $this;
-        //-1 Carbon Date library
+
+        //  Load .env first, then register global helpers.
+        \Beaver\Foundation\Env::load($this->basePath . '/.env');
+        require_once __DIR__ . '/helpers.php';
+
+        //  Config
+        $this->config = new Config($this->basePath . '/config');
+        $this->config->load();
+        $this->instances[Config::class] = $this->config;
+
+        //  Timezone
+        date_default_timezone_set($this->config->get('app.timezone', 'UTC'));
+
+        //  Carbon locale (depois de a config existir)
         if (class_exists(\Carbon\CarbonImmutable::class)) {
             \Carbon\CarbonImmutable::setLocale(
                 $this->config->get('app.locale', 'pt')
             );
         }
 
-        // 0. Load .env first, then register global helpers.
-        \Beaver\Foundation\Env::load($this->basePath . '/.env');
-        require_once __DIR__ . '/helpers.php';
-
-        // 1. Config
-        $this->config = new Config($this->basePath . '/config');
-        $this->config->load();
-        $this->instances[Config::class] = $this->config;
-
-        // 2. Timezone
-        date_default_timezone_set($this->config->get('app.timezone', 'UTC'));
-
-        // 3. View
+        //  View
         $this->instances[View::class] = new View(
             $this->config->get('app.views.path'),
             $this->config->get('app.views.cache')
         );
 
-        // 4. Router (cria o singleton)
+        //  Tema ativo (regista ThemeManager + namespace 'theme')
+        $this->bootTheme();
+
+        //  Router
         $this->instances[Router::class] = Router::current();
 
-        // 5. Hooks
-        $this->instances[Hooks::class] = new Hooks();  // 5. Hooks
+        //  Hooks
+        $this->instances[Hooks::class] = new Hooks();
 
-        // 6. Plugin Manager
+        //  Plugin Manager
         $this->instances[PluginManager::class] = new PluginManager($this);
 
-        // 7. i18n
+        //  i18n
         $this->bootI18n();
     }
+
+
 
     public static function getInstance(): self
     {
@@ -114,6 +117,44 @@ class Application
         return $key === null
             ? $this->config->all()
             : $this->config->get($key, $default);
+    }
+
+
+  /**
+ * Regista o sistema de temas.
+ *
+ * - Cria o ThemeManager e guarda-o no container.
+ * - Se houver tema ativo, regista o namespace 'theme' no View.
+ *
+ * Não faz nada se o projeto não tiver config/themes.php.
+ */
+    protected function bootTheme(): void
+    {
+        $config = $this->config->get('themes');
+        if (!is_array($config)) {
+            return;
+        }
+
+        $paths = \Beaver\Sdk\Theme\ThemePaths::fromConfig($config);
+        $mgr   = new \Beaver\Sdk\Theme\ThemeManager($paths);
+
+        // Registar no container (antes de qualquer uso)
+        $this->instances[\Beaver\Sdk\Theme\ThemeManager::class] = $mgr;
+
+        $slug = $mgr->active();
+        if ($slug === null) {
+            return;
+        }
+
+        $dir = $mgr->path($slug);
+        if ($dir === null) {
+            return;
+        }
+
+        $viewsDir = $dir . '/resources/views';
+        if (is_dir($viewsDir)) {
+            View::registerNamespace('theme', $viewsDir);
+        }
     }
 
     public function boot(): void

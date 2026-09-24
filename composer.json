@@ -1,6 +1,7 @@
 {
     "name": "beaver/framework",
     "description": "Beaver Framework - Modern PHP Framework",
+    "version": "0.1.0",
     "type": "library",
     "license": "MIT",
     "keywords": [

@@ -10,6 +10,7 @@
  * @license    MIT <https://opensource.org/licenses/MIT>
  * @link       https://github.com/Onidesk-TI/beaver-framework
  */
+
 namespace Beaver\Http;
 
 class Request
@@ -23,7 +24,8 @@ class Request
         public readonly array $server,
         public readonly array $files,
         public readonly array $cookies,
-    ) {}
+    ) {
+    }
 
     public static function capture(): self
     {
@@ -31,10 +33,17 @@ class Request
         $uri    = parse_url($_SERVER['REQUEST_URI'] ?? '/', PHP_URL_PATH) ?: '/';
 
         $script = $_SERVER['SCRIPT_NAME'] ?? '';
-        $base   = rtrim(dirname($script), '/\\');
-        if ($base !== '' && $base !== '/' && str_starts_with($uri, $base)) {
-            $uri = substr($uri, strlen($base));
+
+        // Só aplicar base path se SCRIPT_NAME termina em .php (web server normal).
+        // O php -S define SCRIPT_NAME como o path do pedido quando tem extensão,
+        // o que causaria truncamento errado.
+        if (preg_match('#\.php$#i', $script)) {
+            $base = rtrim(dirname($script), '/\\');
+            if ($base !== '' && $base !== '/' && str_starts_with($uri, $base)) {
+                $uri = substr($uri, strlen($base));
+            }
         }
+
         $uri = '/' . ltrim($uri, '/');
 
         $body = $_POST;

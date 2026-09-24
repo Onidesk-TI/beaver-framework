@@ -118,3 +118,8 @@ php-server.log
 # Installer (infraestrutura, sempre presente)
 !/plugins/beaver-installer/
 !/plugins/beaver-installer/**
+
+# Estado runtime
+/app/storage/
+/storage/themes.json
+/storage/plugins.json

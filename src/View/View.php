@@ -81,7 +81,7 @@ class View
 
     private function resolve(string $view): string
     {
-        // Namespace: 'sms::modal' → /path/to/sms/views/modal.php
+    //  Namespace explícito: 'beaver-admin::login' ou 'theme::index'
         if (str_contains($view, '::')) {
             [$ns, $rest] = explode('::', $view, 2);
 
@@ -90,16 +90,28 @@ class View
             }
 
             return self::$namespaces[$ns]
-                 . '/'
-                 . str_replace('.', '/', $rest)
-                 . '.php';
+             . '/'
+             . str_replace('.', '/', $rest)
+             . '.php';
         }
 
-        // View normal: 'home.index' → /app/views/home/index.php
+    // Tema ativo tem prioridade (se registado)
+        if (isset(self::$namespaces['theme'])) {
+            $themeFile = self::$namespaces['theme']
+                   . '/'
+                   . str_replace('.', '/', $view)
+                   . '.php';
+
+            if (is_file($themeFile)) {
+                return $themeFile;
+            }
+        }
+
+    //  Fallback: basePath (skeleton ou app)
         return rtrim($this->basePath, '/')
-             . '/'
-             . str_replace('.', '/', $view)
-             . '.php';
+         . '/'
+         . str_replace('.', '/', $view)
+         . '.php';
     }
 
     private function evaluate(string $file, array $data): string

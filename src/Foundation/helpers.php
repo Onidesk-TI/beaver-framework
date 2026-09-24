@@ -80,3 +80,21 @@ if (!function_exists('config')) {
             ->config($key, $default);
     }
 }
+
+
+if (!function_exists('beaver_version')) {
+    function beaver_version(): string
+    {
+        static $v = null;
+        if ($v !== null) return $v;
+
+        $composer = dirname(__DIR__, 2) . '/composer.json';
+        if (is_file($composer)) {
+            $data = json_decode((string) file_get_contents($composer), true);
+            if (!empty($data['version'])) {
+                return $v = $data['version'];
+            }
+        }
+        return $v = '0.0.0';
+    }
+}
