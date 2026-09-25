@@ -1,0 +1,17 @@
+{
+    "name": "Hello Beaver",
+    "slug": "hello-beaver",
+    "version": "0.1.0",
+    "author": "Franco",
+    "description": "Plugin Hello Beaver para Beaver Framework",
+    "namespace": "Beaver\\Plugins\\HelloBeaver",
+    "main": "src/HelloBeaverPlugin.php",
+    "beaver_version": ">=0.1.0",
+    "api_version": "1.0.0",
+    "permissions": [],
+    "admin_menu": {
+        "label": "Hello Beaver",
+        "icon": "fa-cube"
+    },
+    "routes": "routes/web.php"
+}

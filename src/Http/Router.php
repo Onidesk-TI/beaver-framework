@@ -4,7 +4,6 @@
  * Beaver Framework — Modern PHP framework with a plugin ecosystem.
  *
  * @package    Beaver Framework
- * @version    0.1.0
  * @author     Franco <onidesk@outlook.com>
  * @copyright  2026 Onidesk
  * @license    MIT <https://opensource.org/licenses/MIT>
@@ -60,7 +59,9 @@ class Router
 
     public function dispatch(Request $request): Response
     {
-        $method = $request->method;
+        $method = strtoupper($request->method) === 'HEAD'
+        ? 'GET'
+        : $request->method;
         $uri    = $this->normalize($request->uri);
 
         foreach ($this->routes as $route) {

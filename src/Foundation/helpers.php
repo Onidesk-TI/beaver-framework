@@ -4,7 +4,6 @@
  * Beaver Framework — Modern PHP framework with a plugin ecosystem.
  *
  * @package    Beaver Framework
- * @version    0.1.0
  * @author     Franco <onidesk@outlook.com>
  * @copyright  2026 Onidesk
  * @license    MIT <https://opensource.org/licenses/MIT>
@@ -83,18 +82,21 @@ if (!function_exists('config')) {
 
 
 if (!function_exists('beaver_version')) {
+    /**
+     * Versão do framework.
+     * Lê de Beaver\Foundation\Version (que por sua vez lê composer.json).
+     */
     function beaver_version(): string
     {
-        static $v = null;
-        if ($v !== null) return $v;
+        return \Beaver\Foundation\Version::number();
+    }
 
-        $composer = dirname(__DIR__, 2) . '/composer.json';
-        if (is_file($composer)) {
-            $data = json_decode((string) file_get_contents($composer), true);
-            if (!empty($data['version'])) {
-                return $v = $data['version'];
-            }
-        }
-        return $v = '0.0.0';
+    /**
+     * Versão da Plugin API / SDK.
+     * Lê de Beaver\Foundation\Version::api() (composer.json → extra.beaver.api_version).
+     */
+    function beaver_api_version(): string
+    {
+        return \Beaver\Foundation\Version::api();
     }
 }

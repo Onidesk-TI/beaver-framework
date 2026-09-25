@@ -1,0 +1,33 @@
+# Dependências
+/vendor/
+/node_modules/
+
+# Ambiente
+.env
+.env.local
+.env.*.local
+
+# Storage e cache
+/storage/cache/*
+!/storage/cache/.gitkeep
+/storage/logs/*
+!/storage/logs/.gitkeep
+/storage/sessions/*
+!/storage/sessions/.gitkeep
+/storage/certificates/*
+!/storage/certificates/.gitkeep
+/storage/*.sqlite
+/storage/*.sqlite-journal
+
+# Build / editor
+.idea/
+.vscode/
+*.swp
+*.swo
+.DS_Store
+Thumbs.db
+
+# Testes
+.phpunit.result.cache
+.phpunit.cache/
+/coverage/

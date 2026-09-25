@@ -35,6 +35,27 @@ $repoUrl  = $repoUrl ?? 'https://github.com/Onidesk-TI/beaver-framework';
         <span>Documentação</span>
       </a>
 
+      <a class="nav-link<?= $active === 'commands' ? ' active' : '' ?>"
+         href="/commands"
+         <?= $active === 'commands' ? 'aria-current="page"' : '' ?>>
+        <svg aria-hidden="true"><use href="#ico-terminal"/></svg>
+        <span>Comandos</span>
+      </a>
+
+      <a class="nav-link<?= $active === 'versions' ? ' active' : '' ?>"
+         href="/versions"
+         <?= $active === 'versions' ? 'aria-current="page"' : '' ?>>
+        <svg aria-hidden="true"><use href="#ico-tag"/></svg>
+        <span>Versões</span>
+      </a>
+
+      <a class="nav-link<?= $active === 'manual' ? ' active' : '' ?>"
+         href="/manual"
+         <?= $active === 'manual' ? 'aria-current="page"' : '' ?>>
+        <svg aria-hidden="true"><use href="#ico-book"/></svg>
+        <span>Manual</span>
+      </a>
+
       <a class="nav-cta" href="<?= htmlspecialchars($repoUrl, ENT_QUOTES) ?>"
          target="_blank" rel="noopener noreferrer">
         <svg aria-hidden="true"><use href="#ico-gh"/></svg>

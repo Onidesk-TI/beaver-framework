@@ -103,6 +103,10 @@ php-server.log
 !/plugins/paginator/**
 !/plugins/beaver-skeleton/
 !/plugins/beaver-skeleton/**
+!/plugins/beaver-installer/
+!/plugins/beaver-installer/**
+!/plugins/hello-beaver/
+!/plugins/hello-beaver/**
 
 /public/plugins/*
 !/public/plugins/.gitkeep

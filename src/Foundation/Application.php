@@ -4,7 +4,6 @@
  * Beaver Framework — Modern PHP framework with a plugin ecosystem.
  *
  * @package    Beaver Framework
- * @version    0.1.0
  * @author     Franco <onidesk@outlook.com>
  * @copyright  2026 Onidesk
  * @license    MIT <https://opensource.org/licenses/MIT>
@@ -28,11 +27,16 @@ class Application
     private array $instances = [];
 
     public Config $config;
-    public string $basePath;
+    public string $basePath;      // alias de $projectPath
+    public string $projectPath;   // raiz do projeto (app/, config/, routes/, storage/)
+    public string $frameworkPath; // raiz do framework (src/, sdk/, plugins/, stubs/)
 
-    public function __construct(?string $basePath = null)
+    public function __construct(?string $projectPath = null, ?string $frameworkPath = null)
     {
-        $this->basePath = $basePath ?? dirname(__DIR__, 2);
+        // Compatibilidade: se só um path é passado, framework = projeto.
+        $this->projectPath   = $projectPath   ?? dirname(__DIR__, 2);
+        $this->frameworkPath = $frameworkPath ?? $this->projectPath;
+        $this->basePath      = $this->projectPath;   // alias BC
         self::$instance = $this;
 
         //  Load .env first, then register global helpers.
@@ -81,9 +85,9 @@ class Application
     public static function getInstance(): self
     {
         if (self::$instance === null) {
-          // Fallback: basePath do framework
-            $basePath = dirname(__DIR__, 2);
-            self::$instance = new self($basePath);
+            // Fallback: o framework a autoarrancar (sem projeto externo).
+            $root = dirname(__DIR__, 2);
+            self::$instance = new self($root, $root);
         }
         return self::$instance;
     }

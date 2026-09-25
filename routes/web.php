@@ -3,6 +3,11 @@
 use Beaver\Http\Response;
 use Beaver\Http\Router;
 
+
+ini_set('display_errors', '1');
+ini_set('display_startup_errors', '1');
+error_reporting(E_ALL);
+
 $router = Router::current();
 
 // ── Landing ──
@@ -16,6 +21,28 @@ $router->get('/', function () {
     ob_start();
     require $view;
     return Response::html(ob_get_clean());
+});
+
+//documentation
+
+$router->get('/documentation', function () {
+    return view('documentation');
+});
+
+// ── Comandos ──
+$router->get('/commands', function () {
+    return view('commands');
+});
+
+// ── Versões ──
+$router->get('/versions', function () {
+    return view('versions');
+});
+
+
+// ── SDK ──
+$router->get('/sdk', function () {
+    return view('sdk');
 });
 
 // ── Hello ──
@@ -51,6 +78,46 @@ $router->get('/theme-preview/{slug}', function ($req, $slug) {
     ob_start();
     require $viewFile;
     return Response::html(ob_get_clean());
+});
+
+// ── Manual ──
+$router->get('/manual', function () {
+    $view = dirname(__DIR__) . '/app/views/manual.php';
+
+    if (!is_file($view)) {
+        return Response::text('Manual não encontrado em app/views/manual.php', 404);
+    }
+
+    ob_start();
+    require $view;
+    return Response::html(ob_get_clean());
+});
+
+// Aceita também /manual.php (compatibilidade com o link antigo)
+$router->get('/manual.php', function () use ($router) {
+    // redireciona para /manual (mais limpo)
+    return (new Response('', 301))
+        ->withHeader('Location', '/manual');
+});
+
+$router->get('/pro', function () {
+    $view = dirname(__DIR__) . '/app/views/pro.php';
+
+    if (!is_file($view)) {
+        return Response::text('Manual não encontrado em app/views/pro.php', 404);
+    }
+
+    ob_start();
+    require $view;
+    return Response::html(ob_get_clean());
+});
+
+
+// Aceita também /manual.php (compatibilidade com o link antigo)
+$router->get('/pro.php', function () use ($router) {
+    // redireciona para /manual (mais limpo)
+    return (new Response('', 301))
+        ->withHeader('Location', '/pro');
 });
 
 // ── Helper: servir assets de temas ──

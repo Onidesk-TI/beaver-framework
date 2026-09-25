@@ -10,7 +10,7 @@
  * @link       https://github.com/Onidesk-TI/beaver-framework
  */
 
-$title   = 'Beaver SDK · Plugin API v1.0.0';
+$title   = 'Beaver SDK · Plugin API v' . beaver_api_version();
 $version = beaver_version();
 $year    = date('Y');
 ?>
@@ -76,7 +76,7 @@ require __DIR__ . '/partials/header.php';
     <div class="card-content">
       <div class="pill">
         <span class="pulse-dot"></span>
-        Plugin API v1.0.0 — estável
+        Plugin API v<?= beaver_api_version() ?> — estável
       </div>
 
       <svg class="beaver" aria-hidden="true"><use href="#beaver"/></svg>
@@ -108,7 +108,7 @@ require __DIR__ . '/partials/header.php';
 
       <p class="home-note">
         <span class="icon">🧩</span>
-        Estável desde v1.0.0 — muda só com nova versão de API.
+        Estável desde v<?= beaver_api_version() ?> — muda só com nova versão de API.
       </p>
     </div>
 

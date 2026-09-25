@@ -1,0 +1,31 @@
+{
+    "name": "beaver/app",
+    "description": "Aplicação Beaver Framework",
+    "type": "project",
+    "license": "MIT",
+    "require": {
+        "php": ">=8.1",
+        "beaver/framework": "^{{ FRAMEWORK_VERSION_MINOR }}"
+    },
+    "require-dev": {
+        "phpunit/phpunit": "^11.0"
+    },
+    "autoload": {
+        "psr-4": {
+            "App\\": "app/"
+        },
+        "files": []
+    },
+    "scripts": {
+        "post-create-project-cmd": [
+            "@php beaver key:generate --ansi",
+            "@php beaver migrate --ansi"
+        ]
+    },
+    "config": {
+        "sort-packages": true,
+        "optimize-autoloader": true
+    },
+    "minimum-stability": "stable",
+    "prefer-stable": true
+}

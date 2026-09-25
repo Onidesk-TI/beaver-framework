@@ -1,7 +1,7 @@
 {
     "name": "beaver/framework",
     "description": "Beaver Framework - Modern PHP Framework",
-    "version": "0.1.0",
+    "version": "0.3.0",
     "type": "library",
     "license": "MIT",
     "keywords": [
@@ -32,7 +32,9 @@
             "Beaver\\Plugins\\Tips\\": "plugins/tips/src/",
             "Beaver\\Plugins\\UpdateManager\\": "plugins/update-manager/src/",
             "Beaver\\Plugins\\BeaverAdmin\\": "plugins/beaver-admin/src/",
-            "Beaver\\Plugins\\BeaverInstaller\\": "plugins/beaver-installer/src/"
+            "Beaver\\Plugins\\BeaverInstaller\\": "plugins/beaver-installer/src/",
+            "Beaver\\Plugins\\Cursos\\": "plugins/beaver-cursos/src/",
+            "Beaver\\Plugins\\CursoBeaverFundamentos\\": "plugins/curso-beaver-fundamentos/src/"
         },
         "files": [
             "src/View/helpers.php"
@@ -45,4 +47,9 @@
         "optimize-autoloader": true,
         "sort-packages": true
     }
-}
+    ,
+    "extra": {
+        "beaver": {
+            "api_version": "1.0.0"
+        }
+    }}
